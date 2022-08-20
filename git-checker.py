@@ -28,7 +28,7 @@ def restart_program():
 
 
 def main():
-    print("hello")
+    print("hello123")
     while True:
         update_repo()
         time.sleep(10)
