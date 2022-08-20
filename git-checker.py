@@ -35,7 +35,7 @@ def restart_program():
 
 
 def main():
-    logger.info("hello123")
+    logger.info("1232141243")
     while True:
         update_repo()
         time.sleep(10)
