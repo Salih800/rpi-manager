@@ -1,3 +1,2 @@
 # rpi-manager
-Vehicle Control with Raspberry Pis
-hello
+Vehicle Control with Raspberry Pi
