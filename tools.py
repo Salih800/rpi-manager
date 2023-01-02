@@ -41,12 +41,12 @@ def write_json(json_data, json_file):
     json.dump(data, open(json_file, "w"))
 
 
-def get_hostname():
+def get_hostname() -> str:
     import socket
     return socket.gethostname()
 
 
-def get_vehicle_id():
+def get_vehicle_id() -> str:
     return get_device_config()["vehicle_id"]
 
 
@@ -60,7 +60,7 @@ def get_device_config(hostname=get_hostname()):
 
 
 # calculate distance between two gps locations in meters
-def calculate_distance(location1, location2):
+def calculate_distance(location1, location2) -> float:
     import math
     lat1, lon1 = location1["lat"], location1["lng"]
     lat2, lon2 = location2["lat"], location2["lng"]
@@ -75,7 +75,7 @@ def calculate_distance(location1, location2):
 
 
 # reboot system if error happened
-def restart_system(error_type, error_message):
+def restart_system(error_type, error_message) -> None:
     logging.info(f"{error_type}: {error_message}")
     logging.info("Rebooting the system!")
     time.sleep(5)
@@ -84,7 +84,11 @@ def restart_system(error_type, error_message):
 
 
 # check given location between list of locations and return the closest location in meters and index
-def check_location_and_speed(gps_data, locations, maximum_distance=50, speed_limit=5, on_the_move=False):
+def check_location_and_speed(gps_data,
+                             locations,
+                             maximum_distance=50,
+                             speed_limit=5,
+                             on_the_move=False):
     min_distance = float("inf")
     closest_location = None
 
