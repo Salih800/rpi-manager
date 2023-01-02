@@ -6,15 +6,15 @@ from src.camera_manager import CameraManager
 from src.device_config import DeviceConfig
 from src.gps_reader import GPSReader
 from src.server_listener import Listener
-from tools import check_location_and_speed, get_hostname
+from tools import check_location_and_speed
 from utils.file_uploader import FileUploader
 from utils.garbage_list_getter import read_garbage_list
 
 
 class VehicleController(threading.Thread, DeviceConfig):
-    def __init__(self, is_enough_space, hostname=get_hostname()):
+    def __init__(self, is_enough_space):
         threading.Thread.__init__(self, daemon=True, name="VehicleController")
-        DeviceConfig.__init__(self, hostname=hostname)
+        DeviceConfig.__init__(self)
 
         self.camera_manager = CameraManager(camera_port=self.camera_port,
                                             camera_rotation=self.camera_rotation,
@@ -37,7 +37,7 @@ class VehicleController(threading.Thread, DeviceConfig):
         self.running = True
         old_gps_data = None
         logging.info("Starting Vehicle Controller...")
-        logging.info(f"Vehicle ID: {self.vehicle_id} | Device Type: {self.device_type}")
+        logging.info(f"{self}")
 
         while self.running:
             if not self.server_listener.is_alive():
