@@ -2,18 +2,18 @@ import json
 import logging
 import os.path
 
-from src.request_handler import RequestApi
+import src.request_handler as rh
 from constants.files import garbage_location_list_file
 from constants.urls import url_garbage_locations
-from tools import get_hostname
+from tools import get_vehicle_id
 
 
-def update_garbage_list(url=url_garbage_locations, hostname=get_hostname(), timeout=5):
+def update_garbage_list(url=url_garbage_locations, vehicle_id=get_vehicle_id(), timeout=5):
     garbage_location_list = []
-    garbage_locations = RequestApi.get(url + hostname, timeout=timeout)
+    response = rh.get(url + vehicle_id, timeout=timeout)
 
-    if garbage_locations.status_code == 200:
-        garbage_locations = garbage_locations.json()['garbageLocations']
+    if response.status_code == 200:
+        garbage_locations = response.json()['garbageLocations']
         if len(garbage_locations) == 0:
             logging.warning("No garbage locations found")
             return False
@@ -32,14 +32,14 @@ def update_garbage_list(url=url_garbage_locations, hostname=get_hostname(), time
         return True
 
     else:
-        logging.error(f"Error happened while getting garbage locations. Status Code: {garbage_locations.status_code}")
+        logging.warning(f"Couldn't get garbage locations. Status Code: {response.status_code}")
         return False
 
 
 def read_garbage_list():
     if not os.path.isfile(garbage_location_list_file):
-        logging.warning(f"{garbage_location_list_file} not found. Downloading file...")
-        update_garbage_list()
+        logging.warning(f"{garbage_location_list_file} not found.")
+        return []
 
     return json.load(open(garbage_location_list_file, 'r'))
 
