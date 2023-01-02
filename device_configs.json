@@ -1,4 +1,22 @@
 {
+    "default": {
+        "device_type": "garbage",
+        "vehicle_plate": "34TEST34",
+        "maximum_garbage_distance": 50,
+        "gps_port": "/dev/ttyACM0",
+        "detection_model": {
+            "name": "garbage_v1.pt",
+            "size": 256
+        },
+        "program": "ContainerVehicle-Online.py",
+        "camera_port": 0,
+        "camera_rotation": 0,
+        "camera_fourcc": "MJPG",
+        "streaming_width": 720,
+        "camera_width": "1280",
+        "camera_height": "720",
+        "speed_limit": 5
+    },
     "rpi-2": {
         "device_type": "garbage",
         "vehicle_plate": "DZL 090",
