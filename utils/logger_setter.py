@@ -1,6 +1,5 @@
 import logging
 from pathlib import Path
-from datetime import datetime
 
 from constants.folders import log_folder
 
@@ -34,7 +33,7 @@ class CustomFormatter(logging.Formatter):
 
 def set_logger(log_name="rpi-default"):
     Path(log_folder).mkdir(parents=True, exist_ok=True)
-    log_filename = datetime.now().strftime(log_folder + log_name + '.log')
+    log_filename = log_folder + log_name + '.log'
 
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
