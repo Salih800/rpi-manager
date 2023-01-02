@@ -1,0 +1,9 @@
+max_photo_count = 400
+minimum_photo_size = 10 * 1024  # 10KB
+max_video_duration = 60  # 60 seconds
+minimum_video_size = 0.1  # 0.1MB
+atiknakit_server_port = 8181
+atiknakit_server_timeout = 60
+socket_buffer_size = 127
+jpg_save_quality = 50
+mb = 1024 * 1024

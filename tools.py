@@ -11,6 +11,8 @@ from datetime import datetime, timedelta
 from constants.folders import path_to_upload
 from constants.files import device_config_file
 
+from src.size_converter import SizeConverter
+
 
 def read_json(json_file):
     try:
@@ -26,24 +28,17 @@ def read_json(json_file):
         logging.info(f"{len(data)} file info saved.")
         return data
 
-    except:
-        logging.error(f"Error happened while reading {json_file}", exc_info=True)
-
 
 def write_json(json_data, json_file):
     json_file_path = os.path.split(json_file)[0]
     if not os.path.isdir(json_file_path):
         os.makedirs(json_file_path)
-    try:
-        if not os.path.isfile(json_file):
-            data = [json_data]
-        else:
-            data = read_json(json_file)
-            data.append(json_data)
-        json.dump(data, open(json_file, "w"))
-
-    except:
-        logging.error(f"Error happened while writing {json_file}", exc_info=True)
+    if not os.path.isfile(json_file):
+        data = [json_data]
+    else:
+        data = read_json(json_file)
+        data.append(json_data)
+    json.dump(data, open(json_file, "w"))
 
 
 def get_hostname():
@@ -51,9 +46,17 @@ def get_hostname():
     return socket.gethostname()
 
 
-def get_device_config():
+def get_vehicle_id():
+    return get_device_config()["vehicle_id"]
+
+
+def get_device_config(hostname=get_hostname()):
     device_configs = json.load(open(device_config_file))
-    return device_configs[get_hostname()]
+    try:
+        return device_configs[hostname]
+    except KeyError:
+        logging.error(f"Device config for {get_hostname()} not found in {device_config_file}.")
+    raise KeyError("Device config not found.")
 
 
 # calculate distance between two gps locations in meters
@@ -72,9 +75,9 @@ def calculate_distance(location1, location2):
 
 
 # reboot system if error happened
-def restart_system(error_type, error_msg):
-    logging.error(f"{error_type}: {error_msg}")
-    logging.error("Rebooting the system!")
+def restart_system(error_type, error_message):
+    logging.info(f"{error_type}: {error_message}")
+    logging.info("Rebooting the system!")
     time.sleep(5)
     os.system("sudo reboot")
     sys.exit(1)
@@ -126,10 +129,10 @@ def get_running_threads():
     return [t.name for t in threading.enumerate()]
 
 
-# check system time with gps time and if it is more than 3 minutes different, update system time
+# check system time with gps time and if it is more than 3 seconds different, update system time
 def check_system_time(gps_local_time):
     system_time = datetime.now()
-    if abs(system_time - gps_local_time) > timedelta(minutes=1):
+    if abs(system_time - gps_local_time) > timedelta(seconds=3):
         os.system("sudo date -s '{}'".format(gps_local_time))
         logging.info(f"System time updated to {gps_local_time}")
 
@@ -145,7 +148,7 @@ def install_requirements():
 
 
 def update_repo():
-    logging.info("Trying to update repo...")
+    # logging.info("Trying to update repo...")
     try:
         stdout = subprocess.check_output("git pull").decode()
         if stdout.startswith("Already"):
@@ -158,3 +161,29 @@ def update_repo():
 
     except subprocess.CalledProcessError as stderr:
         logging.warning(stderr, exc_info=True)
+        return False
+
+
+def get_directory_size(directory):
+    """Returns the `directory` size in bytes."""
+    total = SizeConverter(0)
+    try:
+        # print("[+] Getting the size of", directory)
+        for entry in os.scandir(directory):
+            if entry.is_file():
+                # if it's a file, use stat() function
+                total.bytes += entry.stat().st_size
+            elif entry.is_dir():
+                # if it's a directory, recursively call this function
+                try:
+                    total.bytes += get_directory_size(entry.path).bytes
+                    # print("[+] {} size: {}".format(entry.path, total))
+                except FileNotFoundError:
+                    pass
+    except NotADirectoryError:
+        # if `directory` isn't a directory, get the file size then
+        return os.path.getsize(directory)
+    except PermissionError:
+        # if for whatever reason we can't open the folder, return 0
+        return 0
+    return total
