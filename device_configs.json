@@ -111,18 +111,34 @@
         "device_type": "garbage",
         "vehicle_plate": "FN TEST",
         "maximum_garbage_distance": 50,
-        "gps_port": "/dev/ttyACM0",
+        "gps_port": "COM1",
         "detection_model": {
             "name": "",
             "size": 256
         },
-        "program": "ContainerVehicle-Online.py",
         "camera_port": 0,
         "camera_rotation": 0,
         "camera_fourcc": "MJPG",
         "streaming_width": 720,
-        "camera_width": "1280",
-        "camera_height": "720",
+        "camera_width": 1280,
+        "camera_height": 720,
+        "speed_limit": 5
+    },
+    "autopi-1": {
+        "device_type": "garbage",
+        "vehicle_plate": "34TEST34",
+        "maximum_garbage_distance": 50,
+        "gps_port": "COM1",
+        "detection_model": {
+            "name": "",
+            "size": 256
+        },
+        "camera_port": 0,
+        "camera_rotation": 0,
+        "camera_fourcc": "MJPG",
+        "streaming_width": 720,
+        "camera_width": 1280,
+        "camera_height": 720,
         "speed_limit": 5
     }
 }
