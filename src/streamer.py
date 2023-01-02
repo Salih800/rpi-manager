@@ -1,4 +1,4 @@
-import logging
+# import logging
 import time
 import threading
 
@@ -30,13 +30,13 @@ class Streamer(threading.Thread):
 
     def send_frame(self, frame):
         self.sending_frame = True
-        try:
-            self.server.sendall(frame)
-            self.total_bytes_sent += len(frame)
-            self.frame_sent += 1
-        except:
-            logging.error("Error while sending frame", exc_info=True)
-            time.sleep(5)
+        # try:
+        self.server.sendall(frame)
+        self.total_bytes_sent += len(frame)
+        self.frame_sent += 1
+        # except:
+        #     logging.error("Error while sending frame", exc_info=True)
+        #     time.sleep(5)
 
         self.sending_frame = False
 

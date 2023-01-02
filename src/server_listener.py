@@ -6,7 +6,7 @@ import socket
 from src.streamer import Streamer
 import src.request_handler as rh
 
-from tools import get_hostname
+from tools import get_vehicle_id
 
 from constants.others import alive_byte
 from constants.urls import url_atiknakit_server
@@ -18,8 +18,8 @@ class Listener(Thread):
     Listener for the server.
     """
     def __init__(self,
-                 hostname: str = get_hostname(),
-                 streaming_width: int = 720,
+                 vehicle_id=get_vehicle_id(),
+                 streaming_width=640,
                  host=url_atiknakit_server,
                  port=atiknakit_server_port,
                  buff_size=socket_buffer_size,
@@ -29,7 +29,7 @@ class Listener(Thread):
         Thread.__init__(self, daemon=True, name="Listener")
 
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.hostname = hostname
+        self.vehicle_id = vehicle_id
         self.streaming_width = streaming_width
 
         self.host = host
@@ -56,7 +56,7 @@ class Listener(Thread):
                     self.server.connect(server_address)
                     self.server.settimeout(self.server_timeout)
 
-                    id_message = bytes("$id" + self.hostname + "$", "utf-8")
+                    id_message = bytes("$id" + self.vehicle_id + "$", "utf-8")
                     self.server.sendall(id_message)
 
                     logging.info(f"Id message sent to the Server: {id_message}")
@@ -129,9 +129,9 @@ class Listener(Thread):
                 except ConnectionResetError as cse:
                     logging.error(f"Connection closed by server!: {cse}")
                     time.sleep(5)
-                except:
-                    logging.error(f"Unexpected error from Listener:", exc_info=True)
-                    time.sleep(60)
+                # except:
+                #     logging.error(f"Unexpected error from Listener:", exc_info=True)
+                #     time.sleep(60)
 
                 self.listening = False
                 streamer.streaming = False

@@ -10,7 +10,8 @@ from utils.file_uploader import FileUploader
 from utils.logger_setter import set_logger
 from utils.garbage_list_getter import update_garbage_list
 
-from tools import restart_program, get_running_threads, update_repo, restart_system, get_vehicle_id
+from tools import (restart_program, get_running_threads,
+                   update_repo, restart_system, get_vehicle_id)
 
 
 def main():
@@ -43,7 +44,7 @@ def main():
             else:
                 if vehicle_controller.is_alive():
                     vehicle_controller.stop()
-                logging.info("Not enough space")
+                logging.info("Not enough space on disk.")
         else:
             restart_system(error_type="memory", error_message="Not enough memory")
 
