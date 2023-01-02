@@ -7,3 +7,4 @@ atiknakit_server_timeout = 60
 socket_buffer_size = 127
 jpg_save_quality = 50
 mb = 1024 * 1024
+update_wait_time = 60 * 60  # 1 hour

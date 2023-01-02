@@ -1,3 +1,4 @@
+import logging
 import os
 import threading
 import shutil
@@ -37,7 +38,7 @@ class SystemChecker(threading.Thread):
     def is_enough_memory(self, percent=90) -> bool:
         return self.used_memory_percent <= percent
 
-    def is_enough_space(self, percent=95) -> bool:
+    def is_enough_space(self, percent=90) -> bool:
         return self.disk_usage_percent <= percent
 
     def get_process_memory(self):
@@ -64,6 +65,7 @@ class SystemChecker(threading.Thread):
         self.cpu_usage = psutil.cpu_percent(interval=1)
 
     def run(self) -> None:
+        logging.info("Starting System Checker...")
         while True:
             self.get_system_memory()
             self.get_process_memory()
