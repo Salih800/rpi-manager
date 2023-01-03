@@ -1,13 +1,10 @@
-import threading
-import time
-
-import serial
-import pynmea2
 import logging
+import time
+import threading
 from datetime import datetime, timedelta
+import subprocess as sp
 
 from src.singleton import Singleton
-from tools import restart_system, check_system_time
 
 
 class EmptyGPSDataError(Exception):
@@ -21,18 +18,10 @@ class InvalidGPSDataError(Exception):
 
 
 class GPSReader(threading.Thread, metaclass=Singleton):
-    def __init__(self, port, baudrate=9600, bytesize=8, timeout=1, stopbits=serial.STOPBITS_ONE):
+    def __init__(self):
         threading.Thread.__init__(self, daemon=True, name="GPSReader")
 
         self.running = False
-
-        self.serial = serial.Serial(port=port, baudrate=baudrate, bytesize=bytesize, timeout=timeout, stopbits=stopbits)
-
-        self.port = port
-        self.baudrate = baudrate
-        self.bytesize = bytesize
-        self.timeout = timeout
-        self.stopbits = stopbits
 
         self.gps_valid = False
 
@@ -51,8 +40,8 @@ class GPSReader(threading.Thread, metaclass=Singleton):
         self.local_date = None
         self.local_date_str = None
 
-    def get_serial_data(self):
-        return self.serial.readlines()[-1].decode()
+    # def get_serial_data(self):
+    #     return self.serial.readlines()[-1].decode()
 
     def data_to_upload(self):
         return {"date": self.local_date.strftime("%Y-%m-%d %H:%M:%S"),
@@ -75,8 +64,8 @@ class GPSReader(threading.Thread, metaclass=Singleton):
                                             '%Y-%m-%d %H:%M:%S') + timedelta(hours=3)
         self.local_date_str = self.local_date.strftime("%y%m%d-%H%M%S")
 
-    def __str__(self):
-        return f"GPS Reader: {self.port}"
+    # def __str__(self):
+    #     return f"GPS Reader: {self.port}"
 
     def get_gps_data(self):
         return GPSData(self)
@@ -94,80 +83,26 @@ class GPSReader(threading.Thread, metaclass=Singleton):
         logging.info(f"Starting {self}...")
 
         while self.running:
-            try:
-                with serial.Serial(port=self.port,
-                                   baudrate=self.baudrate,
-                                   bytesize=self.bytesize,
-                                   timeout=self.timeout,
-                                   stopbits=self.stopbits) as serial_port:
+            self.read_gps_data()
+            time.sleep(1)
 
-                    parse_error_count = 0
-                    invalid_gps_count = 0
-                    empty_gps_count = 0
-
-                    max_error_count = 100
-
-                    while self.running:
-                        try:
-                            gps_data = serial_port.readline().decode('utf-8', errors='replace')
-
-                            if len(gps_data) < 1:
-                                raise EmptyGPSDataError("No GPS data available!")
-
-                            for msg in pynmea2.NMEAStreamReader().next(gps_data):
-                                parsed_data = pynmea2.parse(str(msg))
-
-                                if parsed_data.sentence_type == "RMC":
-
-                                    if parsed_data.status == "A":
-                                        self.gps_valid = True
-                                        self.parse_gps_data(parsed_data)
-                                        check_system_time(self.local_date)
-
-                                        parse_error_count = 0
-                                        invalid_gps_count = 0
-                                        empty_gps_count = 0
-
-                                        continue
-
-                                    else:
-                                        raise InvalidGPSDataError("GPS data is invalid!")
-
-                        except pynmea2.nmea.ParseError:
-                            parse_error_count += 1
-                            if parse_error_count >= max_error_count:
-                                logging.warning(f"Parse Error happened {parse_error_count} times!")
-                                break
-
-                        except InvalidGPSDataError:
-                            invalid_gps_count += 1
-                            if invalid_gps_count >= max_error_count:
-                                logging.warning(f"Invalid GPS data happened {invalid_gps_count} times!")
-                                break
-
-                        except EmptyGPSDataError:
-                            empty_gps_count += 1
-                            if empty_gps_count >= max_error_count:
-                                logging.warning(f"Empty GPS data happened {empty_gps_count} times!")
-                                break
-
-                        except:
-                            logging.error("Unexpected GPS Parse error:", exc_info=True)
-                            time.sleep(60)
-                            break
-
-                        self.gps_valid = False
-
-            except serial.serialutil.SerialException:
-                logging.error("Serial Exception:", exc_info=True)
-                time.sleep(60)
-                restart_system(error_type="GPS error", error_message="Couldn't find the GPS Device!")
-
-            except:
-                logging.error("Unexpected GPS error:", exc_info=True)
-                time.sleep(60)
-
+    def read_gps_data(self):
+        proc = sp.Popen(["gnss.connection", "execute", "gnss_location"], stdout=sp.PIPE, stderr=sp.PIPE)  # shell=True
+        stdout, stderr = proc.communicate()
+        if stderr:
+            logging.error(stderr.decode("utf-8", "ignore"))
             self.gps_valid = False
+            raise EmptyGPSDataError
+        else:
+            gps_data = stdout.decode("utf-8", "ignore").split(",")
+            if len(gps_data) != 8:
+                logging.error(f"Invalid GPS data: {gps_data}")
+                self.gps_valid = False
+                raise InvalidGPSDataError
+            else:
+                self.gps_valid = True
+                logging.info(f"GPS data: {gps_data}")
+                # self.parse_gps_data(data=gps_data)
 
     def stop(self):
         self.running = False
@@ -177,7 +112,7 @@ class GPSReader(threading.Thread, metaclass=Singleton):
 
 # parse gps data as a class
 class GPSData:
-    def __init__(self, gps_data: GPSReader):
+    def __init__(self, gps_data):
         self.lat = gps_data.lat
         self.lat_dir = gps_data.lat_dir
         self.lng = gps_data.lng
