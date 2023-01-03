@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 import src.request_handler as rh
-from src.detection_model import GarbageModel
+from src.detection_models import GarbageModel
 
 from constants.numbers import mb
 from constants.others import file_upload_type
@@ -47,8 +47,7 @@ def upload_image(file_path):
 
     if response.status_code == 200:
         if response.json()["status"] == "success":
-            model = GarbageModel()
-            detection_result = model.detect(file_path)
+            detection_result = GarbageModel().detect(file_path)
             detection_count = len(detection_result)
 
             uploaded_file = response.json()["filename"]

@@ -1,5 +1,6 @@
 import logging
 import json
+import os.path
 import time
 import torch
 import cv2
@@ -45,6 +46,10 @@ class DetectionModel:
 
     def load_model(self):
         self.model_name += ".pt" if self.device == "cuda:0" else ".onnx"
+        model_path = weights_folder + self.model_name
+        if not os.path.isfile(model_path):
+            logging.warning("Model not found.")
+            raise Exception("Model not found.")
         self.model = torch.hub.load("./yolov5",
                                     'custom',
                                     source='local',
