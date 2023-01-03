@@ -70,10 +70,10 @@ class GPSReader(threading.Thread, metaclass=Singleton):
         self.gps_date = data.datestamp.strftime("%Y-%m-%d")
         self.gps_time = data.timestamp.strftime("%H:%M:%S")
         self.spd_over_grnd = data.spd_over_grnd
-        self.speed_in_kmh = round(data.spd_over_grnd * self.knots_to_kmh, 3)
+        self.speed_in_kmh = round(data.spd_over_grnd * self.knots_to_kmh, 1)
         self.local_date = datetime.strptime(self.gps_date + " " + self.gps_time,
                                             '%Y-%m-%d %H:%M:%S') + timedelta(hours=3)
-        self.local_date_str = self.local_date.strftime("%Y-%m-%d %H:%M:%S")
+        self.local_date_str = self.local_date.strftime("%y%m%d-%H%M%S")
 
     def __str__(self):
         return f"GPS Reader: {self.port}"
