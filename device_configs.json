@@ -1,7 +1,7 @@
 {
     "default": {
         "device_type": "garbage",
-        "vehicle_plate": "34TEST34",
+        "vehicle_id": "34TEST34",
         "maximum_garbage_distance": 50,
         "gps_port": "/dev/ttyACM0",
         "detection_model": {
@@ -15,136 +15,11 @@
         "streaming_width": 720,
         "camera_width": "1280",
         "camera_height": "720",
-        "speed_limit": 5
-    },
-    "rpi-2": {
-        "device_type": "garbage",
-        "vehicle_plate": "DZL 090",
-        "maximum_garbage_distance": 50,
-        "gps_port": "/dev/ttyACM0",
-        "detection_model": {
-            "name": "garbage_v1.pt",
-            "size": 256
-        },
-        "program": "ContainerVehicle-Online.py",
-        "camera_port": 0,
-        "camera_rotation": 0,
-        "camera_fourcc": "MJPG",
-        "streaming_width": 720,
-        "camera_width": "1024",
-        "camera_height": "768",
-        "speed_limit": 5
-    },
-    "rpi-3": {
-        "device_type": "garbage",
-        "vehicle_plate": "FN 9748",
-        "maximum_garbage_distance": 50,
-        "gps_port": "/dev/ttyS0",
-        "detection_model": {
-            "name": "garbage_v1.pt",
-            "size": 256
-        },
-        "program": "ContainerVehicle-Online.py",
-        "camera_port": "rtsp://admin:admin123@192.168.1.2:554",
-        "camera_rotation": 0,
-        "camera_fourcc": "MJPG",
-        "streaming_width": 720,
-        "camera_width": "1280",
-        "camera_height": "720",
-        "speed_limit": 5
-    },
-    "rpi-4": {
-        "device_type": "garbage-caca",
-        "vehicle_plate": "FN 8705",
-        "maximum_garbage_distance": 50,
-        "gps_port": "/dev/ttyS0",
-        "detection_model": {
-            "name": "garbage-caca_v1.pt",
-            "size": 256
-        },
-        "program": "ContainerVehicle-Online.py",
-        "camera_port": 0,
-        "camera_rotation": 0,
-        "camera_fourcc": "MJPG",
-        "streaming_width": 720,
-        "camera_width": "1280",
-        "camera_height": "960",
-        "speed_limit": 5
-    },
-    "rpi-5": {
-        "device_type": "garbage-caca",
-        "vehicle_plate": "BP 9562",
-        "maximum_garbage_distance": 50,
-        "gps_port": "/dev/ttyS0",
-        "detection_model": {
-            "name": "garbage-caca_v1.pt",
-            "size": 256
-        },
-        "program": "ContainerVehicle-Online.py",
-        "camera_port": 0,
-        "camera_rotation": 0,
-        "camera_fourcc": "MJPG",
-        "streaming_width": 720,
-        "camera_width": "1280",
-        "camera_height": "960",
-        "speed_limit": 5
-    },
-    "rpi-6": {
-        "device_type": "cavus",
-        "vehicle_plate": "FN 9966",
-        "maximum_garbage_distance": 61,
-        "gps_port": "/dev/ttyS0",
-        "detection_model": {
-            "name": "",
-            "size": 256
-        },
-        "program": "CavusVehicle-Online.py",
-        "camera_port": 0,
-        "camera_rotation": 0,
-        "camera_fourcc": "MJPG",
-        "streaming_width": 720,
-        "camera_width": "1280",
-        "camera_height": "960",
-        "speed_limit": 5
-    },
-    "rpi-7": {
-        "device_type": "cavus",
-        "vehicle_plate": "FN 9970",
-        "maximum_garbage_distance": 61,
-        "gps_port": "/dev/ttyS0",
-        "detection_model": {
-            "name": "",
-            "size": 256
-        },
-        "program": "CavusVehicle-Online.py",
-        "camera_port": 0,
-        "camera_rotation": 0,
-        "camera_fourcc": "MJPG",
-        "streaming_width": 720,
-        "camera_width": "1280",
-        "camera_height": "960",
-        "speed_limit": 5
-    },
-    "rpi-8": {
-        "device_type": "garbage",
-        "vehicle_plate": "FN TEST",
-        "maximum_garbage_distance": 50,
-        "gps_port": "COM1",
-        "detection_model": {
-            "name": "",
-            "size": 256
-        },
-        "camera_port": 0,
-        "camera_rotation": 0,
-        "camera_fourcc": "MJPG",
-        "streaming_width": 720,
-        "camera_width": 1280,
-        "camera_height": 720,
         "speed_limit": 5
     },
     "autopi-1": {
         "device_type": "garbage",
-        "vehicle_plate": "34TEST34",
+        "vehicle_id": "34TEST34",
         "maximum_garbage_distance": 50,
         "gps_port": "COM1",
         "detection_model": {

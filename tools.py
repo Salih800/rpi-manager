@@ -56,7 +56,8 @@ def get_device_config(hostname=get_hostname()):
         return device_configs[hostname]
     except KeyError:
         logging.error(f"Device config for {get_hostname()} not found in {device_config_file}.")
-    raise KeyError("Device config not found.")
+        return device_configs["default"]
+    # raise KeyError("Device config not found.")
 
 
 # calculate distance between two gps locations in meters

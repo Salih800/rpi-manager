@@ -26,7 +26,7 @@ class VehicleController(threading.Thread, DeviceConfig):
 
         self.server_listener = Listener(streaming_width=self.streaming_width)
         # self.file_uploader = FileUploader()
-        self.gps_reader = GPSReader(port=self.gps_port)
+        self.gps_reader = GPSReader()
 
         self.is_enough_space = is_enough_space
 
@@ -48,8 +48,7 @@ class VehicleController(threading.Thread, DeviceConfig):
             #     self.file_uploader.start()
 
             if not self.gps_reader.is_alive():
-                self.gps_reader = GPSReader(port=self.gps_port)
-                print(self.gps_reader, self.gps_port)
+                self.gps_reader = GPSReader()
                 self.gps_reader.start()
                 time.sleep(1)
 
