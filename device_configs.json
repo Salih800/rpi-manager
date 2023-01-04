@@ -19,7 +19,7 @@
     },
     "autopi-1": {
         "device_type": "garbage",
-        "vehicle_id": "34TEST34",
+        "vehicle_id": "34EFL089",
         "maximum_garbage_distance": 50,
         "gps_port": "COM1",
         "detection_model": {
