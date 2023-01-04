@@ -49,7 +49,6 @@ class VehicleController(threading.Thread, DeviceConfig):
 
             if not self.gps_reader.is_alive():
                 self.gps_reader = GPSReader()
-                self.gps_reader.start()
                 time.sleep(1)
 
             if self.is_enough_space():

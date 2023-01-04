@@ -155,7 +155,7 @@ def install_requirements():
 def update_repo():
     # logging.info("Trying to update repo...")
     try:
-        stdout = subprocess.check_output("git pull").decode()
+        stdout = subprocess.check_output(["git", "pull"]).decode()
         if stdout.startswith("Already"):
             logging.info("Repo is already up to date.")
             return False

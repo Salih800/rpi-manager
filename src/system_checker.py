@@ -45,13 +45,13 @@ class SystemChecker(threading.Thread):
         self.proces_memory = SizeConverter(psutil.Process(os.getpid()).memory_info().rss)
 
     def get_system_memory(self):
-        total, available, percent, used, free = psutil.virtual_memory()
+        memory = psutil.virtual_memory()
 
-        self.total_memory = SizeConverter(total)
-        self.available_memory = SizeConverter(available)
-        self.used_memory = SizeConverter(used)
-        self.free_memory = SizeConverter(free)
-        self.used_memory_percent = percent
+        self.total_memory = SizeConverter(memory.total)
+        self.available_memory = SizeConverter(memory.available)
+        self.used_memory = SizeConverter(memory.used)
+        self.free_memory = SizeConverter(memory.free)
+        self.used_memory_percent = memory.percent
 
     def get_disk_usage(self):
         total, used, free = shutil.disk_usage("/")

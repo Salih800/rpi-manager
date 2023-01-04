@@ -40,6 +40,8 @@ class GPSReader(threading.Thread, metaclass=Singleton):
         self.local_date = None
         self.local_date_str = None
 
+        self.start()
+
     # def get_serial_data(self):
     #     return self.serial.readlines()[-1].decode()
 
@@ -83,7 +85,7 @@ class GPSReader(threading.Thread, metaclass=Singleton):
         logging.info(f"Starting {self}...")
 
         while self.running:
-            self.read_gps_data()
+            # self.read_gps_data()
             time.sleep(1)
 
     def read_gps_data(self):
