@@ -73,6 +73,7 @@ class CameraManager(Thread, metaclass=Singleton):
             logging.info(f"Camera info: {self.get_camera_info()}")
         else:
             logging.warning(f"Camera {self.camera_port} is not opened!")
+            time.sleep(10)
 
     def get_camera_info(self):
         return {"width": int(self.camera.get(cv2.CAP_PROP_FRAME_WIDTH)),
