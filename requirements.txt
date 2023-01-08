@@ -5,6 +5,7 @@ torch
 numpy
 gdown
 psutil
+ffmpeg-python
 
 # pynmea2
 # pyserial
