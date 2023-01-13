@@ -30,9 +30,10 @@ class SerialConnection:
         self._serial = serial.Serial(port=self.port,
                                      baudrate=self.baudrate,
                                      timeout=self.timeout,
-                                     bytesize=self.stopbits,
-                                     parity=self.parity,
-                                     stopbits=self.stopbits)
+                                     # bytesize=self.stopbits,
+                                     # parity=self.parity,
+                                     # stopbits=self.stopbits
+                                     )
 
     @Decorators.ensure_open
     def send_command(self, command):
