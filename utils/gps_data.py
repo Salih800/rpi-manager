@@ -2,6 +2,22 @@ import os.path
 from datetime import datetime, timezone
 from constants.folders import location_records
 
+
+def dd2dms(dd):
+    dd = float(dd)
+    mnt, sec = divmod(dd * 3600, 60)
+    deg, mnt = divmod(mnt, 60)
+    return round(deg * 100 + mnt + sec / 100, 4)
+
+
+def dms2dd(dms):
+    dms = float(dms)
+    degrees = int(dms // 100)
+    minutes = int(dms % 100) / 60
+    seconds = (dms % 1) / 36
+    return round(degrees + minutes + seconds, 6)
+
+
 class GPSData:
     def __init__(self, gps_string):
         self.gps_string = gps_string.strip("\r\n").strip("$GPSACP: ")
@@ -36,13 +52,11 @@ class GPSData:
             self.local_date = self.UTC_date.replace(tzinfo=timezone.utc).astimezone(tz=None)
             self.local_date_str = self.local_date.strftime("%y%m%d-%H%M%S")
 
-            dms_lat = float(self.lat[:-1])
             self.lat_dir = self.lat[-1]  # N or S
-            self.lat = round(dms_lat // 100 + (dms_lat % 100) / 60, 6)
+            self.lat = dms2dd(self.lat[:-1])
 
-            dms_lng = float(self.lng[:-1])
             self.lng_dir = self.lng[-1]  # W or E
-            self.lng = round(dms_lng // 100 + (dms_lng % 100) / 60, 6)
+            self.lng = dms2dd(self.lng[:-1])
 
             self.gps_location = {"lat": self.lat, "lng": self.lng}
 
