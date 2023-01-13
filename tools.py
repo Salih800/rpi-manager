@@ -110,7 +110,8 @@ def check_location_and_speed(gps_data,
 
 def restart_program():
     logging.info("Restarting the program...")
-    os.execl(sys.executable, sys.executable, *sys.argv)
+    exit(0)
+    # os.execl(sys.executable, sys.executable, *sys.argv)
 
 
 # check given file is bigger than given size in kb

@@ -5,7 +5,6 @@ import logging
 import os
 import time
 
-# from constants.files import arial_font
 from constants.numbers import (max_photo_count, minimum_photo_size, max_video_duration,
                                minimum_video_size, jpg_save_quality)
 from constants.others import byte_seperator
@@ -13,8 +12,6 @@ from constants.others import byte_seperator
 from utils.singleton import Singleton
 from constants.folders import path_to_upload, recorded_files
 from tools import check_file_size
-
-# from PIL import Image, ImageDraw, ImageFont
 
 from threading import Thread
 import cv2
@@ -24,7 +21,7 @@ from tools import decode_fourcc
 
 class CameraManager(Thread, metaclass=Singleton):
     def __init__(self, settings):
-        Thread.__init__(self, daemon=True, name="camera_manager")
+        Thread.__init__(self, daemon=True, name="CameraManager")
 
         self.port = settings.port
         self.rotation = settings.rotation

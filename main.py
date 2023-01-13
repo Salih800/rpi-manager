@@ -36,7 +36,7 @@ def main():
 
                 if not vehicle_controller.is_alive():
                     vehicle_controller = VehicleController(system_checker.is_enough_space)
-                    logging.info(f"Vehicle controller started: {vehicle_controller}")
+                    logging.info(f"Vehicle controller started.")
 
                 if not file_uploader.is_alive():
                     file_uploader = FileUploader()
@@ -44,7 +44,7 @@ def main():
             else:
                 if vehicle_controller.is_alive():
                     vehicle_controller.stop()
-                logging.info("Not enough space on disk.")
+                logging.warning("Not enough space on disk.")
         else:
             restart_system(error_type="memory", error_message="Not enough memory")
 
