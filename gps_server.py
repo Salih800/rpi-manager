@@ -22,7 +22,7 @@ class Server(SerialConnection, Thread):
                 self.send_command(LINE)
                 self.send_command(OK)
             else:
-                print("Server: Unknown command")
+                print(f"Server: Unknown command: {data}")
 
 
 if __name__ == '__main__':
