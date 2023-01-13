@@ -1,7 +1,4 @@
-opencv-python
 requests
-numpy
-gdown
 psutil
 ffmpeg-python
 pyserial
