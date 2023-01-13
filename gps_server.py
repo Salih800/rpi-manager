@@ -18,7 +18,7 @@ class Server(SerialConnection, Thread):
             if data.startswith(POWER_UP):
                 self.send_command(OK)
             elif data.startswith(GET_GPS_DATA):
-                self.send_command(GPS_DATA + NO_FIX_DATA)
+                self.send_command(GPS_DATA + FIX_DATA)
                 self.send_command(LINE)
                 self.send_command(OK)
             else:

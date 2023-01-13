@@ -12,7 +12,7 @@ class GPSNotPoweredUpError(Exception):
 
 class GPSReader(SerialConnection, Thread):
     def __init__(self, port, baudrate, timeout):
-        Thread.__init__(self, daemon=True, name="Client")
+        Thread.__init__(self, daemon=True, name="GPSReader")
         SerialConnection.__init__(self, port, baudrate, timeout)
 
         self._gps_data = GPSData(GPS_DATA + NO_FIX_DATA)
