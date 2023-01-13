@@ -13,13 +13,16 @@ class Server(SerialConnection, Thread):
 
     def run(self):
         while self.running:
-            self.read_data(startswith="")
-            if self.read_data(startswith=POWER_UP):
+            data = self.read_data(startswith="")
+            print(f"Server: {data}")
+            if data.startswith(POWER_UP):
                 self.send_command(OK)
-            elif self.read_data(startswith=GET_GPS_DATA):
+            elif data.startswith(GET_GPS_DATA):
                 self.send_command(GPS_DATA + NO_FIX_DATA)
                 self.send_command(LINE)
                 self.send_command(OK)
+            else:
+                print("Server: Unknown command")
 
 
 if __name__ == '__main__':

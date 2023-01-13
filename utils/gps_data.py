@@ -1,3 +1,4 @@
+import os.path
 from datetime import datetime, timezone
 from constants.folders import location_records
 
@@ -76,6 +77,8 @@ class GPSData:
                 "speed": str(self.spkm)}
 
     def save_to_file(self):
+        if not os.path.isdir(location_records):
+            os.mkdir(location_records)
         filename = location_records + datetime.now().strftime("%Y-%m-%d") + ".txt"
         with open(filename, "a") as f:
             f.write(f"{datetime.now()}: {self.gps_string}\n")
