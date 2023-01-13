@@ -27,7 +27,7 @@ def upload_gps_data(new_gps_location, old_gps_location=None):
     response = rh.post(url=url_location_upload + get_vehicle_id(), json=new_gps_location.data_to_upload())
 
     if response.status_code == 200:
-        logging.info(f"GPS data uploaded to server successfully!")
+        logging.info(f"GPS data uploaded to server successfully: {new_gps_location.data_to_upload()}")
     else:
         logging.warning(f"GPS data upload to server failed with status code {response.status_code}!")
         write_json(new_gps_location.data_to_upload(), path_to_upload + "_failed_gps_uploads.json")

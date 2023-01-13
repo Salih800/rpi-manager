@@ -99,7 +99,7 @@ def check_location_and_speed(gps_data,
         if distance < min_distance:
             min_distance = distance
             closest_location = loc
-    if maximum_distance > min_distance:
+    if min_distance < maximum_distance:
         if on_the_move:
             if gps_data.spkm > speed_limit:
                 return closest_location["id"]
