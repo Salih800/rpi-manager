@@ -7,11 +7,12 @@ import sys
 import threading
 import time
 from datetime import datetime, timedelta
+import cv2
 
 from constants.folders import path_to_upload
 from constants.files import device_config_file
 
-from src.size_converter import SizeConverter
+from utils.size_converter import SizeConverter
 
 
 def read_json(json_file):
@@ -100,10 +101,10 @@ def check_location_and_speed(gps_data,
             closest_location = loc
     if maximum_distance > min_distance:
         if on_the_move:
-            if gps_data.speed_in_kmh > speed_limit:
+            if gps_data.spkm > speed_limit:
                 return closest_location["id"]
         else:
-            if gps_data.speed_in_kmh < speed_limit:
+            if gps_data.spkm < speed_limit:
                 return closest_location["id"]
 
 
@@ -192,3 +193,22 @@ def get_directory_size(directory):
         # if for whatever reason we can't open the folder, return 0
         return 0
     return total
+
+
+def draw_text(img,
+              text,
+              pos=(0, 0),
+              text_color=(255, 255, 255),
+              text_size=2.0,
+              text_thickness=1,
+              text_bg_color=(0, 0, 0)
+              ):
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    x, y = pos
+    (w, h), b = cv2.getTextSize(text, font, text_size, text_thickness)
+    cv2.rectangle(img, (x, y), (x + w, y - h - b), text_bg_color, -1)
+    cv2.putText(img, text, (x, y - 5), font, text_size, text_color, text_thickness)
+
+
+def decode_fourcc(fourcc):
+    return ''.join([chr((int(fourcc) >> 8 * i) & 0xFF) for i in range(4)])

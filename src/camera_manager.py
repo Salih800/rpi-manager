@@ -10,7 +10,7 @@ from constants.numbers import (max_photo_count, minimum_photo_size, max_video_du
                                minimum_video_size, jpg_save_quality)
 from constants.others import byte_seperator
 # from src.gps_reader import GPSReader
-from src.singleton import Singleton
+from utils.singleton import Singleton
 from constants.folders import path_to_upload, recorded_files
 from tools import check_file_size
 
@@ -19,17 +19,18 @@ from tools import check_file_size
 from threading import Thread
 import cv2
 from cv2 import imwrite as my_imwrite
+from tools import decode_fourcc
 
 
 class CameraManager(Thread, metaclass=Singleton):
-    def __init__(self, camera_port=0, camera_rotation=0, width=1280, height=720, fourcc='MJPG'):
+    def __init__(self, settings):
         Thread.__init__(self, daemon=True, name="camera_manager")
 
-        self.camera_port = camera_port
-        self.camera_rotation = camera_rotation
-        self.camera_width = width
-        self.camera_height = height
-        self.fourcc = cv2.VideoWriter_fourcc(*fourcc)
+        self.port = settings.port
+        self.rotation = settings.rotation
+        self.width = settings.width
+        self.height = settings.height
+        self.fourcc = cv2.VideoWriter_fourcc(*settings.fourcc)
 
         self.saved_frame_count = 0
         self.passed_frame_count = 0
@@ -40,46 +41,52 @@ class CameraManager(Thread, metaclass=Singleton):
         self.camera = None
         # self.get_drawable_gps_data = GPSReader().get_drawable_gps_data # todo: implement GPSReader
         # self.get_camera()
+        self.running = True
         self.start()
 
     def run(self):
+        logging.info("Starting camera manager ...")
         self.get_camera()
-        while True:
+        while self.running:
             if not self.camera.isOpened():
                 self.get_camera()
                 time.sleep(1)
                 continue
             ret, frame = self.camera.read()
             if ret:
-                self.last_frame = cv2.rotate(frame, self.camera_rotation)
+                self.last_frame = cv2.rotate(frame, self.rotation)
             else:
                 self.last_frame = None
                 logging.warning("Camera read failed!")
                 self.camera.release()
+
+    def stop(self):
+        self.running = False
+        self.release()
 
     def get_camera(self):
         if self.camera is not None:
             if self.camera.isOpened():
                 return
         self.last_frame = None
-        logging.info(f"Trying to get camera {self.camera_port} ...")
+        logging.info(f"Trying to get camera {self.port} ...")
         start_time = time.time()
-        self.camera = cv2.VideoCapture(self.camera_port)
-        self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.camera_width)
-        self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.camera_height)
+        self.camera = cv2.VideoCapture(self.port)
+        self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
+        self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
         self.camera.set(cv2.CAP_PROP_FOURCC, self.fourcc)
         if self.camera.isOpened():
-            logging.info(f"Camera {self.camera_port} is opened in {round(time.time() - start_time, 2)} seconds.")
+            logging.info(f"Camera {self.port} is opened in {round(time.time() - start_time, 2)} seconds.")
             logging.info(f"Camera info: {self.get_camera_info()}")
         else:
-            logging.warning(f"Camera {self.camera_port} is not opened!")
+            logging.warning(f"Camera {self.port} is not opened!")
             time.sleep(10)
 
     def get_camera_info(self):
         return {"width": int(self.camera.get(cv2.CAP_PROP_FRAME_WIDTH)),
                 "height": int(self.camera.get(cv2.CAP_PROP_FRAME_HEIGHT)),
-                "fourcc": self.camera.get(cv2.CAP_PROP_FOURCC),
-                "fps": int(self.camera.get(cv2.CAP_PROP_FPS))}
+                "fourcc": decode_fourcc(self.camera.get(cv2.CAP_PROP_FOURCC)),
+                "fps": round(self.camera.get(cv2.CAP_PROP_FPS), 2)}
 
     def get_frame(self):
         return self.last_frame
@@ -188,30 +195,6 @@ class CameraManager(Thread, metaclass=Singleton):
 
         else:
             logging.warning(f"OpenCV couldn't find the file: {video_file_path}")
-
-    # draw a rectangle filled with black color that has a size of given text
-    # and draw given text to on this rectangle
-    # using pillow library
-    # @staticmethod
-    # def draw_text_and_rectangle(frame, text, x=0, y=0,
-    # font_scale=15, img_color=(255, 255, 255), rect_color=(0, 0, 0)):
-    #     font = ImageFont.truetype(arial_font, font_scale)
-    #     img = Image.fromarray(frame)
-    #     draw = ImageDraw.Draw(img)
-    #
-    #     w, h = font.getsize(text)
-    #     w, h = w + 1, h + 1
-    #
-    #     draw.rectangle((x, y, x + w, y + h), fill=rect_color)
-    #
-    #     draw.text((x, y), text, fill=img_color, font=font)
-    #
-    #     return CV.pil_to_np(img)
-
-    @staticmethod
-    def show_frame(frame, window_name="Frame", wait_time=1):
-        cv2.imshow(window_name, frame)
-        cv2.waitKey(wait_time)
 
     def release(self):
         self.taking_video = False

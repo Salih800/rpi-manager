@@ -2,7 +2,7 @@ import json
 import logging
 import os.path
 
-import src.request_handler as rh
+import utils.request_handler as rh
 from constants.files import garbage_location_list_file
 from constants.urls import url_garbage_locations
 from tools import get_vehicle_id

@@ -4,7 +4,7 @@ from threading import Thread
 import socket
 
 from src.streamer import Streamer
-import src.request_handler as rh
+import utils.request_handler as rh
 
 from tools import get_vehicle_id
 

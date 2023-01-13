@@ -5,7 +5,7 @@ import shutil
 import time
 import psutil
 
-from src.size_converter import SizeConverter
+from utils.size_converter import SizeConverter
 
 
 class SystemChecker(threading.Thread):

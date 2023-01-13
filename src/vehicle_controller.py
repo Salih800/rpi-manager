@@ -3,9 +3,9 @@ import threading
 import time
 
 from src.camera_manager import CameraManager
-from src.device_config import DeviceConfig
-from src.gps_reader import GPSReader
-from src.server_listener import Listener
+from utils.device_config import DeviceConfig
+from src.gps_manager import GPSReader
+# from src.server_listener import Listener
 from tools import check_location_and_speed
 from utils.file_uploader import upload_gps_data
 from utils.garbage_list_getter import read_garbage_list
@@ -16,22 +16,42 @@ class VehicleController(threading.Thread, DeviceConfig):
         threading.Thread.__init__(self, daemon=True, name="VehicleController")
         DeviceConfig.__init__(self)
 
-        self.camera_manager = CameraManager(camera_port=self.camera_port,
-                                            camera_rotation=self.camera_rotation,
-                                            width=self.camera_width,
-                                            height=self.camera_height,
-                                            fourcc=self.camera_fourcc)
+        self.camera_manager = None
+        self.gps_reader = None
 
-        self.running = False
-
-        self.server_listener = Listener(streaming_width=self.streaming_width)
+        # self.server_listener = Listener(streaming_width=self.streaming_width)
         # self.file_uploader = FileUploader()
-        self.gps_reader = GPSReader()
 
         self.is_enough_space = is_enough_space
 
         self.garbage_list = read_garbage_list()
+
+        self.running = True
         self.start()
+
+    def start_gps_reader(self):
+        if self.gps_reader is not None:
+            if self.gps_reader.is_alive():
+                return
+        self.gps_reader = GPSReader(port=self.gps_settings.port,
+                                    baudrate=self.gps_settings.baudrate,
+                                    timeout=self.gps_settings.timeout)
+
+    def stop_gps_reader(self):
+        if self.gps_reader is not None:
+            if self.gps_reader.is_alive():
+                self.gps_reader.stop()
+
+    def start_camera_manager(self):
+        if self.camera_manager is not None:
+            if self.camera_manager.is_alive():
+                return
+        self.camera_manager = CameraManager(settings=self.camera_settings)
+
+    def stop_camera_manager(self):
+        if self.camera_manager is not None:
+            if self.camera_manager.is_alive():
+                self.camera_manager.stop()
 
     def run(self) -> None:
         self.running = True
@@ -40,20 +60,19 @@ class VehicleController(threading.Thread, DeviceConfig):
         logging.info(f"{self}")
 
         while self.running:
-            if not self.server_listener.is_alive():
-                self.server_listener = Listener(streaming_width=self.streaming_width)
+            # if not self.server_listener.is_alive():
+            #     self.server_listener = Listener(streaming_width=self.streaming_width)
 
             # if not self.file_uploader.is_alive():
             #     self.file_uploader = FileUploader()
             #     self.file_uploader.start()
 
-            if not self.gps_reader.is_alive():
-                self.gps_reader = GPSReader()
-                time.sleep(1)
-
             if self.is_enough_space():
-                if self.gps_reader.gps_valid:
-                    gps_data = self.gps_reader.get_gps_data()
+                self.start_gps_reader()
+                self.start_camera_manager()
+
+                gps_data = self.gps_reader.get_gps_data()
+                if gps_data.is_valid():
 
                     threading.Thread(target=upload_gps_data,
                                      daemon=True, name="gps-uploader",
@@ -72,7 +91,7 @@ class VehicleController(threading.Thread, DeviceConfig):
                                         f"{self.device_type}_"
                                         f"{gps_data.local_date_str}_"
                                         f"{gps_data.lat},{gps_data.lng}_"
-                                        f"{gps_data.speed_in_kmh}kmh_"
+                                        f"{gps_data.spkm}kmh_"
                                         f"{detected_location_id}.jpg")
 
                             self.camera_manager.start_picture_save(photo_name=filename,
@@ -104,7 +123,7 @@ class VehicleController(threading.Thread, DeviceConfig):
     def stop(self) -> None:
         logging.info("Stopping Vehicle Controller...")
         self.running = False
-        self.camera_manager.release()
-        self.server_listener.stop()
+        self.stop_camera_manager()
+        self.stop_gps_reader()
+        # self.server_listener.stop()
         # self.file_uploader.stop()
-        self.gps_reader.stop()

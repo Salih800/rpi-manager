@@ -1,13 +1,11 @@
--r yolov5/requirements.txt
 opencv-python
 requests
-torch
 numpy
 gdown
 psutil
 ffmpeg-python
+pyserial
 
 # pynmea2
-# pyserial
 # imutils
 # pillow

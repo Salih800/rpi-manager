@@ -20,18 +20,20 @@
     "autopi-2b435399e33b": {
         "device_type": "garbage",
         "vehicle_id": "34EFL089",
-        "maximum_garbage_distance": 50,
-        "gps_port": "COM1",
-        "detection_model": {
-            "name": "",
-            "size": 256
+        "maximum_garbage_distance": 30,
+        "speed_limit": 5,
+        "gps_settings": {
+            "port": "/dev/ttyUSB2",
+            "baudrate": 115200,
+            "timeout": 5
         },
-        "camera_port": 0,
-        "camera_rotation": 0,
-        "camera_fourcc": "MJPG",
-        "streaming_width": 720,
-        "camera_width": 1280,
-        "camera_height": 720,
-        "speed_limit": 5
+        "camera_settings": {
+            "port": "/dev/video0",
+            "rotation": 0,
+            "fourcc": "MJPG",
+            "width": 1280,
+            "height": 960,
+            "streaming_width": 640
+        }
     }
 }
