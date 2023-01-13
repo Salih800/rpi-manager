@@ -28,7 +28,7 @@ class Server(SerialConnection, Thread):
             if data.startswith(POWER_UP):
                 self.send_command(OK)
             elif data.startswith(GET_GPS_DATA):
-                gps_location = "41.14231312833451,28.79271038554962".split(",")
+                gps_location = "40.78843473159141, 29.44004852675274".split(",")
                 lat, lng = map(dd2dms, gps_location)
                 local_time = datetime.now().strftime("%H%M%S.%f")
                 local_date = datetime.now().strftime("%d%m%y")
