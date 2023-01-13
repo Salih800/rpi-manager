@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from utils.serial_connection import SerialConnection
 from threading import Thread
 from constants.gps_commands import *
@@ -18,7 +20,10 @@ class Server(SerialConnection, Thread):
             if data.startswith(POWER_UP):
                 self.send_command(OK)
             elif data.startswith(GET_GPS_DATA):
-                self.send_command(GPS_DATA + FIX_DATA)
+                local_time = datetime.now().strftime("%H%M%S.%f")
+                local_date = datetime.now().strftime("%d%m%y")
+                fix_data = MANUEL_FIX_DATA.format(local_time, local_date)
+                self.send_command(GPS_DATA + fix_data)
                 self.send_command(LINE)
                 self.send_command(OK)
             else:
