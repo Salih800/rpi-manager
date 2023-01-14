@@ -252,39 +252,39 @@ class FileUploader(threading.Thread):
             if rh.check_connection():
 
                 file_list = list(Path(self.folder_path).glob("*"))
-                if len(file_list) > 0:
+                if len(file_list) > 1:
                     logging.info(f"{len(file_list)} files to upload. "
                                  f"Total size: {get_directory_size(self.folder_path)}")
-                    for file_path in file_list:
-                        if os.path.getsize(file_path) != 0:
+                for file_path in file_list:
+                    if os.path.getsize(file_path) != 0:
 
-                            if rh.check_connection():
+                        if rh.check_connection():
 
-                                if file_path.suffix == ".jpg":
-                                    upload_image(file_path)
+                            if file_path.suffix == ".jpg":
+                                upload_image(file_path)
 
-                                elif file_path.suffix == ".mp4":
-                                    upload_video(file_path)
+                            elif file_path.suffix == ".mp4":
+                                upload_video(file_path)
 
-                                elif file_path.name.endswith(atiknakit_failed_uploads):
-                                    upload_failed_uploads(file_path)
+                            elif file_path.name.endswith(atiknakit_failed_uploads):
+                                upload_failed_uploads(file_path)
 
-                                elif file_path.name.endswith(atiknakit_failed_locations):
-                                    upload_failed_locations(file_path)
+                            elif file_path.name.endswith(atiknakit_failed_locations):
+                                upload_failed_locations(file_path)
 
-                                # elif file_path.endswith(uploaded_files):
-                                #     upload_json_to_gdrive(file_path)
-
-                            else:
-                                logging.warning("No Internet Connection!")
-                                break
+                            # elif file_path.endswith(uploaded_files):
+                            #     upload_json_to_gdrive(file_path)
 
                         else:
-                            logging.warning(
-                                f"Image File size is too small! File: {file_path}\tSize: {os.path.getsize(file_path)}")
-                            os.remove(file_path)
+                            logging.warning("No Internet Connection!")
+                            break
 
-            time.sleep(10)
+                    else:
+                        logging.warning(
+                            f"Image File size is too small! File: {file_path}\tSize: {os.path.getsize(file_path)}")
+                        os.remove(file_path)
+
+            time.sleep(60)
 
     def stop(self):
         self.running = False

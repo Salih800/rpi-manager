@@ -7,7 +7,7 @@ from utils.device_config import DeviceConfig
 from src.gps_manager import GPSReader
 # from src.server_listener import Listener
 from tools import check_location_and_speed
-from utils.file_uploader import upload_gps_data
+from src.file_uploader import upload_gps_data
 from utils.garbage_list_getter import read_garbage_list
 
 

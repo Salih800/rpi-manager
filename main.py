@@ -6,7 +6,7 @@ from constants.numbers import update_wait_time
 from src.system_checker import SystemChecker
 from src.vehicle_controller import VehicleController
 
-from utils.file_uploader import FileUploader
+from src.file_uploader import FileUploader
 from utils.logger_setter import set_logger
 from utils.garbage_list_getter import update_garbage_list
 
