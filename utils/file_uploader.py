@@ -1,4 +1,3 @@
-import glob
 import logging
 import os
 import shutil
@@ -252,7 +251,7 @@ class FileUploader(threading.Thread):
 
             if rh.check_connection():
 
-                file_list = glob.glob(self.folder_path)
+                file_list = list(Path(self.folder_path).glob("*"))
                 if len(file_list) > 0:
                     logging.info(f"{len(file_list)} files to upload. "
                                  f"Total size: {get_directory_size(self.folder_path)}")
@@ -261,16 +260,16 @@ class FileUploader(threading.Thread):
 
                             if rh.check_connection():
 
-                                if file_path.endswith(".jpg"):
+                                if file_path.suffix == ".jpg":
                                     upload_image(file_path)
 
-                                elif file_path.endswith(".mp4"):
+                                elif file_path.suffix == ".mp4":
                                     upload_video(file_path)
 
-                                elif file_path.endswith(atiknakit_failed_uploads):
+                                elif file_path.name.endswith(atiknakit_failed_uploads):
                                     upload_failed_uploads(file_path)
 
-                                elif file_path.endswith(atiknakit_failed_locations):
+                                elif file_path.name.endswith(atiknakit_failed_locations):
                                     upload_failed_locations(file_path)
 
                                 # elif file_path.endswith(uploaded_files):
@@ -290,4 +289,3 @@ class FileUploader(threading.Thread):
     def stop(self):
         self.running = False
         logging.info("Stopping File Uploader...")
-
