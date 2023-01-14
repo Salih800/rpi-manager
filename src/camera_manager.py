@@ -53,7 +53,7 @@ class CameraManager(Thread, metaclass=Singleton):
             ret, frame = self.camera.read()
             if ret:
                 frame = imutils.rotate(frame, self.rotation)
-                draw_text(frame, str(datetime.now()), (10, 30))
+                draw_text(frame, str(datetime.now()), (20, 60), text_size=1)
                 self.last_frame = frame
             else:
                 self.last_frame = None

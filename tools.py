@@ -125,7 +125,7 @@ def check_file_size(file_path, size):
         else:
             if not os.path.isdir(path_to_upload):
                 os.makedirs(path_to_upload)
-            shutil.move(file_path, path_to_upload)
+            shutil.move(file_path, path_to_upload + os.path.basename(file_path))
         return True
     else:
         logging.warning(f"{file_path} is not a file.")
