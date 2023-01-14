@@ -2,6 +2,7 @@ requests
 psutil
 ffmpeg-python
 pyserial
+imutils
 
 # pynmea2
 # imutils

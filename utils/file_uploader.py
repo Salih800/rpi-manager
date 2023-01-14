@@ -276,6 +276,10 @@ class FileUploader(threading.Thread):
                                 # elif file_path.endswith(uploaded_files):
                                 #     upload_json_to_gdrive(file_path)
 
+                            else:
+                                logging.warning("No Internet Connection!")
+                                break
+
                         else:
                             logging.warning(
                                 f"Image File size is too small! File: {file_path}\tSize: {os.path.getsize(file_path)}")

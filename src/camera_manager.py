@@ -1,9 +1,10 @@
 import base64
 import shutil
-# from datetime import datetime
 import logging
 import os
 import time
+from datetime import datetime
+from threading import Thread
 
 from constants.numbers import (max_photo_count, minimum_photo_size, max_video_duration,
                                minimum_video_size, jpg_save_quality)
@@ -12,11 +13,11 @@ from constants.others import byte_seperator
 from utils.singleton import Singleton
 from constants.folders import path_to_upload, recorded_files
 from tools import check_file_size
-
-from threading import Thread
-import cv2
-from cv2 import imwrite as my_imwrite
 from tools import decode_fourcc
+from tools import draw_text
+
+import cv2
+import imutils
 
 
 class CameraManager(Thread, metaclass=Singleton):
@@ -51,7 +52,9 @@ class CameraManager(Thread, metaclass=Singleton):
                 continue
             ret, frame = self.camera.read()
             if ret:
-                self.last_frame = cv2.rotate(frame, self.rotation)
+                frame = imutils.rotate(frame, self.rotation)
+                draw_text(frame, str(datetime.now()), (10, 30))
+                self.last_frame = frame
             else:
                 self.last_frame = None
                 logging.warning("Camera read failed!")
@@ -145,7 +148,7 @@ class CameraManager(Thread, metaclass=Singleton):
             if frame is not None:
                 if not os.path.isdir(recorded_files):
                     os.makedirs(recorded_files)
-                my_imwrite(recorded_files + photo_name, frame, [cv2.IMWRITE_JPEG_QUALITY, jpg_save_quality])
+                cv2.imwrite(recorded_files + photo_name, frame, [cv2.IMWRITE_JPEG_QUALITY, jpg_save_quality])
                 if check_file_size(recorded_files + photo_name, minimum_photo_size):
                     self.saved_frame_count += 1
         else:
