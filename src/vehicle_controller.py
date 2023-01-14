@@ -33,7 +33,7 @@ class VehicleController(threading.Thread, DeviceConfig):
         if self.gps_reader is not None:
             if self.gps_reader.is_alive():
                 return
-        self.gps_reader = GPSReader(port="/dev/pts/2",
+        self.gps_reader = GPSReader(port="/dev/pts/5",
                                     baudrate=self.gps_settings.baudrate,
                                     timeout=self.gps_settings.timeout)
 
