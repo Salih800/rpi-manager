@@ -58,6 +58,7 @@ class SerialConnection:
             if not data:
                 logging.warning(f"SerialConnection: No data received.")
                 self.close()
+                break
         return data
 
     @Decorators.ensure_open
