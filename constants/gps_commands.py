@@ -1,3 +1,4 @@
+AT = "AT\r\n"
 POWER_UP = "AT$GPSP=1\r\n"
 GET_GPS_DATA = "AT$GPSACP\r\n"
 GPS_DATA = "$GPSACP: "

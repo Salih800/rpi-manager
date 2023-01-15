@@ -26,8 +26,10 @@ class GPSReader(SerialConnection, Thread):
     def run(self):
         logging.info(f"Starting GPS Reader...")
         logging.info(f"Port: {self._serial.port}, Baudrate: {self._serial.baudrate}, Timeout: {self._serial.timeout}")
-        self.send_command(POWER_UP)
+        self.send_command(AT)
+        self.read_until(OK)
         if self.is_open():
+            self.send_command(POWER_UP)
             data = self.read_until(expected=OK)
             if data.startswith(OK):
                 while self.running:

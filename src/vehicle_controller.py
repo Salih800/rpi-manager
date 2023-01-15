@@ -86,7 +86,7 @@ class VehicleController(threading.Thread, DeviceConfig):
                     min_distance, closest_location_id = check_locations(gps_data=gps_data, locations=self.garbage_list)
 
                     if time.time() - location_log_time > 60:
-                        logging.info(f"Closest location: {closest_location_id}, Distance: {min_distance}")
+                        logging.info(f"Closest location: {closest_location_id}, Distance: {int(min_distance)} meters")
                         location_log_time = time.time()
 
                     if (min_distance < self.max_loc_dist and
