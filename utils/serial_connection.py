@@ -54,7 +54,7 @@ class SerialConnection:
     def read_until(self, expected="$GPSACP"):
         while True:
             data = self.read_data()
-            logging.warning(f"SerialConnection: {data.encode()} | {expected.encode()}")
+            # logging.warning(f"SerialConnection: {data.encode()} | {expected.encode()}")
             if not data:
                 logging.warning(f"SerialConnection: No data received.")
                 self.close()
