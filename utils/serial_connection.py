@@ -63,7 +63,7 @@ class SerialConnection:
     @Decorators.ensure_open
     def close(self):
         logging.info(f"Closing serial connection...")
-        time.sleep(1)
+        time.sleep(10)
         self._serial.close()
 
     def open(self):
