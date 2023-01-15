@@ -6,7 +6,7 @@ from src.camera_manager import CameraManager
 from utils.device_config import DeviceConfig
 from src.gps_manager import GPSReader
 # from src.server_listener import Listener
-from tools import check_location_and_speed
+from tools import check_locations
 from src.file_uploader import upload_gps_data
 from utils.garbage_list_getter import read_garbage_list
 
@@ -61,6 +61,8 @@ class VehicleController(threading.Thread, DeviceConfig):
         logging.info("Starting Vehicle Controller...")
         logging.info(f"{self}")
 
+        location_log_time = 0
+
         while self.running:
             # if not self.server_listener.is_alive():
             #     self.server_listener = Listener(streaming_width=self.streaming_width)
@@ -81,44 +83,23 @@ class VehicleController(threading.Thread, DeviceConfig):
                                      args=(gps_data, old_gps_data)).start()
                     old_gps_data = gps_data
 
-                    if self.device_type in ["garbage", "garbage-caca"]:
-                        detected_location_id = check_location_and_speed(gps_data=gps_data,
-                                                                        locations=self.garbage_list,
-                                                                        speed_limit=self.speed_limit,
-                                                                        on_the_move=False,
-                                                                        maximum_distance=self.maximum_garbage_distance)
+                    min_distance, closest_location_id = check_locations(gps_data=gps_data, locations=self.garbage_list)
 
-                        if detected_location_id is not None:
-                            filename = (f"{self.vehicle_id}_"
-                                        f"{self.device_type}_"
-                                        f"{gps_data.local_date_str}_"
-                                        f"{gps_data.lat},{gps_data.lng}_"
-                                        f"{gps_data.spkm}kmh_"
-                                        f"{detected_location_id}.jpg")
+                    if time.time() - location_log_time > 60:
+                        logging.info(f"Closest location: {closest_location_id}, Distance: {min_distance}")
+                        location_log_time = time.time()
 
-                            self.camera_manager.start_picture_save(photo_name=filename,
-                                                                   location_id=detected_location_id)
+                    if (min_distance < self.max_loc_dist and
+                            gps_data.spkm < self.speed_limit):
+                        filename = (f"{self.vehicle_id}_"
+                                    f"{self.device_type}_"
+                                    f"{gps_data.local_date_str}_"
+                                    f"{gps_data.lat},{gps_data.lng}_"
+                                    f"{gps_data.spkm}kmh_"
+                                    f"{closest_location_id}.jpg")
 
-                    elif self.device_type == "cavus":
-                        detected_location_id = check_location_and_speed(gps_data=gps_data,
-                                                                        locations=self.garbage_list,
-                                                                        speed_limit=self.speed_limit,
-                                                                        on_the_move=True,
-                                                                        maximum_distance=self.maximum_garbage_distance)
-                        if detected_location_id is not None:
-                            filename = (f"{self.vehicle_id}_"
-                                        f"{gps_data.local_date_str}_"
-                                        f"{gps_data.lat},{gps_data.lng}_"
-                                        f"{detected_location_id}.mp4")
-
-                            if not self.camera_manager.taking_video:
-                                self.camera_manager.start_video_save(video_name=filename)
-                        else:
-                            self.camera_manager.taking_video = False
-
-                    else:
-                        logging.error("Unknown device type {}".format(self.device_type))
-                        raise Exception("Unknown device type {}".format(self.device_type))
+                        self.camera_manager.start_picture_save(photo_name=filename,
+                                                               location_id=closest_location_id)
 
             time.sleep(1)
 

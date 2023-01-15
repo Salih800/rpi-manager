@@ -86,11 +86,7 @@ def restart_system(error_type, error_message) -> None:
 
 
 # check given location between list of locations and return the closest location in meters and index
-def check_location_and_speed(gps_data,
-                             locations,
-                             maximum_distance=50,
-                             speed_limit=5,
-                             on_the_move=False):
+def check_locations(gps_data, locations):
     min_distance = float("inf")
     closest_location = None
 
@@ -99,14 +95,8 @@ def check_location_and_speed(gps_data,
         if distance < min_distance:
             min_distance = distance
             closest_location = loc
-    # logging.info(f"Closest location: {closest_location}, distance: {min_distance}")
-    if min_distance < maximum_distance:
-        if on_the_move:
-            if gps_data.spkm > speed_limit:
-                return closest_location["id"]
-        else:
-            if gps_data.spkm < speed_limit:
-                return closest_location["id"]
+
+    return min_distance, closest_location["id"]
 
 
 def restart_program():

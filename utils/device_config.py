@@ -14,7 +14,7 @@ class DeviceConfig:
         self.hostname = hostname
         self.vehicle_id = config["vehicle_id"]
         self.device_type = config["device_type"]
-        self.maximum_garbage_distance = config["maximum_garbage_distance"]
+        self.max_loc_dist = config["maximum_garbage_distance"]
         self.speed_limit = config["speed_limit"]
         self.gps_settings = Dict2Class(config["gps_settings"])
         self.camera_settings = Dict2Class(config["camera_settings"])
