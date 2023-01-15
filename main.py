@@ -52,6 +52,7 @@ def main():
 
 
 if __name__ == "__main__":
+    update_repo()
     vehicle_id = get_vehicle_id()
     set_logger(vehicle_id)
     logging.info("Program started")
