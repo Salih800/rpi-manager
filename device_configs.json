@@ -44,7 +44,7 @@
         "gps_settings": {
             "port": "/dev/ttyUSB1",
             "baudrate": 115200,
-            "timeout": 2
+            "timeout": 5
         },
         "camera_settings": {
             "port": "/dev/video0",

@@ -55,6 +55,7 @@ class SerialConnection:
         data = self.read_data()
         while not data.startswith(expected):
             data = self.read_data()
+            logging.warning(f"SerialConnection: {data.encode()}")
             if not data:
                 logging.warning(f"SerialConnection: No data received.")
                 self.close()
