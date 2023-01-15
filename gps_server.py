@@ -27,6 +27,8 @@ class Server(SerialConnection, Thread):
             print(f"{datetime.now().strftime('%H:%M:%S')}: {data.encode()}")
             if not data:
                 self.close()
+            elif data.startswith(AT):
+                self.send_command(OK)
             elif data.startswith(POWER_UP):
                 self.send_command(OK)
             elif data.startswith(GET_GPS_DATA):
