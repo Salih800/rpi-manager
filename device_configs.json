@@ -23,9 +23,9 @@
         "maximum_garbage_distance": 30,
         "speed_limit": 5,
         "gps_settings": {
-            "port": "/dev/ttyUSB2",
+            "port": "/dev/pts/3",
             "baudrate": 115200,
-            "timeout": 5
+            "timeout": 1
         },
         "camera_settings": {
             "port": "/dev/video0",

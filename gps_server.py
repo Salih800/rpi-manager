@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from utils.serial_connection import SerialConnection
 from threading import Thread
@@ -23,23 +23,24 @@ class Server(SerialConnection, Thread):
 
     def run(self):
         while self.running:
-            data = self.read_data(startswith="")
-            print(f"Server: {data}")
+            data = self.read_data()
+            print(f"{datetime.now().strftime('%H:%M:%S')}: {data.encode()}")
             if data.startswith(POWER_UP):
                 self.send_command(OK)
             elif data.startswith(GET_GPS_DATA):
                 gps_location = "41.082763305556,28.785443305556".split(",")
                 lat, lng = map(dd2dms, gps_location)
-                local_time = datetime.now().strftime("%H%M%S.%f")
+                local_time = (datetime.now()
+                              .replace(tzinfo=timezone.utc)
+                              .strftime("%H%M%S.%f")
+                              )
                 local_date = datetime.now().strftime("%d%m%y")
                 fix_data = MANUEL_FIX_DATA.format(local_time, lat, lng, local_date)
                 self.send_command(GPS_DATA + fix_data)
                 self.send_command(LINE)
                 self.send_command(OK)
-            else:
-                print(f"Server: Unknown command: {data}")
 
 
 if __name__ == '__main__':
-    server = Server(port="/dev/pts/4", baudrate=115200, timeout=5)
+    server = Server(port="/dev/pts/4", baudrate=115200, timeout=1)
     server.join()

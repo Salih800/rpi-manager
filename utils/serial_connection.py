@@ -1,3 +1,5 @@
+import logging
+
 import serial
 import time
 
@@ -26,23 +28,27 @@ class SerialConnection:
         self.bytesize = bytesize
         self.parity = parity
         self.stopbits = stopbits
+        self.write_timeout = timeout
 
         self._serial = serial.Serial(port=self.port,
                                      baudrate=self.baudrate,
                                      timeout=self.timeout,
-                                     # bytesize=self.stopbits,
-                                     # parity=self.parity,
-                                     # stopbits=self.stopbits
+                                     write_timeout=self.write_timeout,
                                      )
 
     @Decorators.ensure_open
     def send_command(self, command):
         self._serial.write(command.encode())
-        time.sleep(1)
 
     @Decorators.ensure_open
-    def read_data(self, startswith="$GPSACP"):
-        data = self._serial.readline().decode("utf-8", errors="ignore")
-        while not data.startswith(startswith):
-            data = self._serial.readline().decode("utf-8", errors="ignore")
+    def read_data(self):
+        return self._serial.readline().decode("utf-8", errors="ignore")
+
+    @Decorators.ensure_open
+    def read_until(self, expected="$GPSACP"):
+        data = self.read_data()
+        while not data.startswith(expected):
+            data = self.read_data()
+            if not data:
+                logging.warning(f"SerialConnection: No data received.")
         return data

@@ -21,8 +21,10 @@ import imutils
 
 
 class CameraManager(Thread, metaclass=Singleton):
-    def __init__(self, settings):
+    def __init__(self, parent, settings):
         Thread.__init__(self, daemon=True, name="CameraManager")
+
+        self._parent = parent
 
         self.port = settings.port
         self.rotation = settings.rotation

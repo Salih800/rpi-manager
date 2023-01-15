@@ -11,9 +11,11 @@ class GPSNotPoweredUpError(Exception):
 
 
 class GPSReader(SerialConnection, Thread):
-    def __init__(self, port, baudrate, timeout):
+    def __init__(self, parent, port, baudrate, timeout):
         Thread.__init__(self, daemon=True, name="GPSReader")
         SerialConnection.__init__(self, port, baudrate, timeout)
+
+        self._parent = parent
 
         self._gps_data = GPSData(GPS_DATA + NO_FIX_DATA)
 
@@ -24,12 +26,11 @@ class GPSReader(SerialConnection, Thread):
         logging.info(f"Starting GPS Reader...")
         logging.info(f"Port: {self._serial.port}, Baudrate: {self._serial.baudrate}, Timeout: {self._serial.timeout}")
         self.send_command(POWER_UP)
-        data = self.read_data(startswith=OK)
-        print(f"GPSReader: {data}")
+        data = self.read_until(expected=OK)
         if data.startswith(OK):
             while self.running:
                 self.send_command(GET_GPS_DATA)
-                self._gps_data = GPSData(self.read_data(startswith=GPS_DATA))
+                self._gps_data = GPSData(self.read_until(expected=GPS_DATA))
         else:
             raise GPSNotPoweredUpError()
 

@@ -33,7 +33,8 @@ class VehicleController(threading.Thread, DeviceConfig):
         if self.gps_reader is not None:
             if self.gps_reader.is_alive():
                 return
-        self.gps_reader = GPSReader(port="/dev/pts/5",
+        self.gps_reader = GPSReader(parent=self,
+                                    port="/dev/pts/5",
                                     baudrate=self.gps_settings.baudrate,
                                     timeout=self.gps_settings.timeout)
 
@@ -46,7 +47,8 @@ class VehicleController(threading.Thread, DeviceConfig):
         if self.camera_manager is not None:
             if self.camera_manager.is_alive():
                 return
-        self.camera_manager = CameraManager(settings=self.camera_settings)
+        self.camera_manager = CameraManager(parent=self,
+                                            settings=self.camera_settings)
 
     def stop_camera_manager(self):
         if self.camera_manager is not None:
