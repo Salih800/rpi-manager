@@ -9,7 +9,6 @@ from threading import Thread
 from constants.numbers import (max_photo_count, minimum_photo_size, max_video_duration,
                                minimum_video_size, jpg_save_quality)
 from constants.others import byte_seperator
-# from src.gps_reader import GPSReader
 from utils.singleton import Singleton
 from constants.folders import path_to_upload, recorded_files
 from tools import check_file_size
@@ -39,8 +38,6 @@ class CameraManager(Thread, metaclass=Singleton):
         self.last_frame = None
 
         self.camera = None
-        # self.get_drawable_gps_data = GPSReader().get_drawable_gps_data # todo: implement GPSReader
-        # self.get_camera()
         self.running = True
         self.start()
 
@@ -55,13 +52,24 @@ class CameraManager(Thread, metaclass=Singleton):
             ret, frame = self.camera.read()
             if ret:
                 frame = imutils.rotate(frame, self.rotation)
-                draw_text(frame, datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                          (20, 60), text_size=1, text_thickness=2)
+                self.draw_date_time(frame)
+                self.draw_gps_data(frame)
                 self.last_frame = frame
             else:
                 self.last_frame = None
                 logging.warning("Camera read failed!")
                 self.camera.release()
+
+    @staticmethod
+    def draw_date_time(frame):
+        date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        draw_text(frame, date_time, (20, 60), text_size=1, text_thickness=2)
+
+    def draw_gps_data(self, frame):
+        gps_data = self._parent.gps_reader.get_drawable_gps_data()
+        if gps_data is not None:
+            width, height = frame.shape[1], frame.shape[0]
+            draw_text(frame, gps_data, (20, height - 60), text_size=1, text_thickness=2)
 
     def stop(self):
         self.running = False

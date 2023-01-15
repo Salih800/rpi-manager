@@ -1,4 +1,5 @@
 import logging
+import time
 from threading import Thread
 from utils.serial_connection import SerialConnection
 from utils.gps_data import GPSData
@@ -30,7 +31,12 @@ class GPSReader(SerialConnection, Thread):
         if data.startswith(OK):
             while self.running:
                 self.send_command(GET_GPS_DATA)
-                self._gps_data = GPSData(self.read_until(expected=GPS_DATA))
+                try:
+                    self._gps_data = GPSData(self.read_until(expected=GPS_DATA))
+                except Exception as e:
+                    logging.warning(f"GPSReader: {e}")
+                    self._gps_data = GPSData(GPS_DATA + NO_FIX_DATA)
+                    time.sleep(1)
         else:
             raise GPSNotPoweredUpError()
 
