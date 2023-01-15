@@ -35,5 +35,24 @@
             "height": 960,
             "streaming_width": 640
         }
+    },
+    "autopi-004346de8481": {
+        "device_type": "garbage",
+        "vehicle_id": "34EFL089",
+        "maximum_garbage_distance": 30,
+        "speed_limit": 5,
+        "gps_settings": {
+            "port": "/dev/ttyUSB1",
+            "baudrate": 115200,
+            "timeout": 1
+        },
+        "camera_settings": {
+            "port": "/dev/video0",
+            "rotation": 0,
+            "fourcc": "MJPG",
+            "width": 1280,
+            "height": 960,
+            "streaming_width": 640
+        }
     }
 }
