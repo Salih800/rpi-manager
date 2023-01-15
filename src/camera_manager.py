@@ -60,6 +60,9 @@ class CameraManager(Thread, metaclass=Singleton):
                 logging.warning("Camera read failed!")
                 self.camera.release()
 
+    def put_to_stream_queue(self, frame):
+        self._parent.streamer.put_frame(frame)
+
     @staticmethod
     def draw_date_time(frame):
         date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

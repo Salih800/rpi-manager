@@ -9,6 +9,7 @@ from src.gps_manager import GPSReader
 from tools import check_locations
 from src.file_uploader import upload_gps_data
 from utils.garbage_list_getter import read_garbage_list
+from src.rtsp_streamer import RTSPStreamer
 
 
 class VehicleController(threading.Thread, DeviceConfig):
@@ -18,6 +19,7 @@ class VehicleController(threading.Thread, DeviceConfig):
 
         self.camera_manager = None
         self.gps_reader = None
+        self.streamer = None
 
         # self.server_listener = Listener(streaming_width=self.streaming_width)
         # self.file_uploader = FileUploader()
@@ -55,6 +57,19 @@ class VehicleController(threading.Thread, DeviceConfig):
             if self.camera_manager.is_alive():
                 self.camera_manager.stop()
 
+    def start_streamer(self):
+        if self.streamer is not None:
+            if self.streamer.is_alive():
+                return
+        time.sleep(5)
+        self.streamer = RTSPStreamer(parent=self,
+                                     path="rtsp://93.113.96.30:8554/live")
+
+    def stop_streamer(self):
+        if self.streamer is not None:
+            if self.streamer.is_alive():
+                self.streamer.stop()
+
     def run(self) -> None:
         self.running = True
         old_gps_data = None
@@ -74,6 +89,7 @@ class VehicleController(threading.Thread, DeviceConfig):
             if self.is_enough_space():
                 self.start_gps_reader()
                 self.start_camera_manager()
+                self.start_streamer()
 
                 gps_data = self.gps_reader.get_gps_data()
                 if gps_data.is_valid():
