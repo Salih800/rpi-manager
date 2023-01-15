@@ -1,3 +1,4 @@
+import logging
 from threading import Thread
 import subprocess
 from queue import Queue
@@ -44,6 +45,7 @@ class RTSPStreamer(Thread):
         self.start()
 
     def write(self, frame):
+        logging.info("Writing frame")
         if self.writer is not None:
             if not check_process(self.writer.pid):
                 self.writer.stdin.write(
@@ -62,6 +64,7 @@ class RTSPStreamer(Thread):
                 .astype(np.uint8)
                 .tobytes()
             )
+        logging.info("Frame written")
 
     def put_frame(self, frame):
         self.writer_queue.put(frame)
