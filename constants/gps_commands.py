@@ -1,5 +1,7 @@
 AT = "AT\r\n"
 POWER_UP = "AT$GPSP=1\r\n"
+IS_POWER = "AT$GPSP?\r\n"
+POWERED = "$GPSP: 1\r\n"
 GET_GPS_DATA = "AT$GPSACP\r\n"
 GPS_DATA = "$GPSACP: "
 LINE = "\r\n"

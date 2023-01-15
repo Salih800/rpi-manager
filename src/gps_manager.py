@@ -28,21 +28,23 @@ class GPSReader(SerialConnection, Thread):
         logging.info(f"Port: {self._serial.port}, Baudrate: {self._serial.baudrate}, Timeout: {self._serial.timeout}")
         self.send_command(AT)
         self.read_until(OK)
-        if self.is_open():
-            self.send_command(POWER_UP)
-            data = self.read_until(expected=OK)
-            if data.startswith(OK):
-                while self.running:
-                    self.send_command(GET_GPS_DATA)
-                    try:
-                        self._gps_data = GPSData(self.read_until(expected=GPS_DATA))
-                    except Exception as e:
-                        logging.warning(f"GPSReader: {e}")
-                        self._gps_data = GPSData(GPS_DATA + NO_FIX_DATA)
-                        time.sleep(1)
-            else:
-                logging.error(f"GPSReader: GPS is not powered up: {data}")
-                raise GPSNotPoweredUpError()
+        # if self.is_open():
+            # self.send_command(IS_POWER)
+            # if self.read_until(POWERED):
+            # self.send_command(POWER_UP)
+            # data = self.read_until(expected=OK)
+            # if data.startswith(OK):
+        while self.running:
+            self.send_command(GET_GPS_DATA)
+            try:
+                self._gps_data = GPSData(self.read_until(expected=GPS_DATA))
+            except Exception as e:
+                logging.warning(f"GPSReader: {e}")
+                self._gps_data = GPSData(GPS_DATA + NO_FIX_DATA)
+                time.sleep(1)
+            # else:
+            #     logging.error(f"GPSReader: GPS is not powered up: {data}")
+            #     raise GPSNotPoweredUpError()
 
     def stop(self):
         self.running = False
