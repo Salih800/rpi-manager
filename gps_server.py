@@ -32,10 +32,7 @@ class Server(SerialConnection, Thread):
             elif data.startswith(GET_GPS_DATA):
                 gps_location = "40.78843793216758,29.44000664126109".split(",")
                 lat, lng = map(dd2dms, gps_location)
-                local_time = (datetime.now()
-                              .replace(tzinfo=timezone.utc)
-                              .strftime("%H%M%S.%f")
-                              )
+                local_time = datetime.now().strftime("%H%M%S.%f")
                 local_date = datetime.now().strftime("%d%m%y")
                 fix_data = MANUEL_FIX_DATA.format(local_time, lat, lng, local_date)
                 self.send_command(GPS_DATA + fix_data)
