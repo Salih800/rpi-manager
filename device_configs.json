@@ -50,8 +50,8 @@
             "port": "/dev/video0",
             "rotation": 0,
             "fourcc": "MJPG",
-            "width": 1280,
-            "height": 960,
+            "width": 640,
+            "height": 480,
             "streaming_width": 640
         }
     }
