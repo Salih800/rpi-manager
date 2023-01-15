@@ -25,10 +25,12 @@ class Server(SerialConnection, Thread):
         while self.running:
             data = self.read_data()
             print(f"{datetime.now().strftime('%H:%M:%S')}: {data.encode()}")
-            if data.startswith(POWER_UP):
+            if not data:
+                self.close()
+            elif data.startswith(POWER_UP):
                 self.send_command(OK)
             elif data.startswith(GET_GPS_DATA):
-                gps_location = "41.082763305556,28.785443305556".split(",")
+                gps_location = "40.78843793216758,29.44000664126109".split(",")
                 lat, lng = map(dd2dms, gps_location)
                 local_time = (datetime.now()
                               .replace(tzinfo=timezone.utc)

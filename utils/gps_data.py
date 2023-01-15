@@ -95,4 +95,4 @@ class GPSData:
             os.mkdir(location_records)
         filename = location_records + datetime.now().strftime("%Y-%m-%d") + ".txt"
         with open(filename, "a") as f:
-            f.write(f"{datetime.now()}: {self.gps_string}\n")
+            f.write(f"{datetime.now().strftime('%H:%M:%S')}: {self.gps_string}\n")
