@@ -24,7 +24,9 @@ class GPSData:
         self.gps_data = self.gps_string.split(",")
         self.UTC = self.gps_data[0]  # UTC time
         self.lat = self.gps_data[1]  # latitude in ddmm.mmmm format
+        self.lat_dir = ""  # N or S
         self.lng = self.gps_data[2]  # longitude in dddmm.mmmm format
+        self.lng_dir = ""  # W or E
         self.hdop = self.gps_data[3]  # Horizontal Dilution of Precision
         self.altitude = self.gps_data[4]  # xxxx.x altitude in meters
         self.fix = self.gps_data[5]  # 0 or 1 = Invalid, 2 = 2D, 3 = 3D
@@ -52,10 +54,10 @@ class GPSData:
             self.local_date = self.UTC_date.replace(tzinfo=timezone.utc).astimezone(tz=None)
             self.local_date_str = self.local_date.strftime("%y%m%d-%H%M%S")
 
-            self.lat_dir = self.lat[-1]  # N or S
+            self.lat_dir = self.lat[-1]
             self.lat = dms2dd(self.lat[:-1])
 
-            self.lng_dir = self.lng[-1]  # W or E
+            self.lng_dir = self.lng[-1]
             self.lng = dms2dd(self.lng[:-1])
 
             self.gps_location = {"lat": self.lat, "lng": self.lng}

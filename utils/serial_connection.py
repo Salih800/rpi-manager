@@ -15,7 +15,7 @@ class SerialConnection:
                 except serial.SerialException as e:
                     logging.error(f"SerialConnection: {e}")
                     time.sleep(10)
-                    return
+                    return "ERROR"
                 return func(self, *args, **kwargs)
             return wrapper
 
