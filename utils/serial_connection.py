@@ -9,8 +9,13 @@ class SerialConnection:
         @classmethod
         def ensure_open(cls, func):
             def wrapper(self, *args, **kwargs):
-                if not self._serial.is_open:
-                    self._serial.open()
+                try:
+                    if not self.is_open():
+                        self.open()
+                except serial.SerialException as e:
+                    logging.error(f"SerialConnection: {e}")
+                    time.sleep(10)
+                    return
                 return func(self, *args, **kwargs)
             return wrapper
 
@@ -30,15 +35,16 @@ class SerialConnection:
         self.stopbits = stopbits
         self.write_timeout = timeout
 
-        self._serial = serial.Serial(port=self.port,
-                                     baudrate=self.baudrate,
+        self._serial = serial.Serial(baudrate=self.baudrate,
                                      timeout=self.timeout,
                                      write_timeout=self.write_timeout,
                                      )
+        self._serial.port = self.port
 
     @Decorators.ensure_open
     def send_command(self, command):
         self._serial.write(command.encode())
+        time.sleep(0.5)
 
     @Decorators.ensure_open
     def read_data(self):
@@ -51,4 +57,18 @@ class SerialConnection:
             data = self.read_data()
             if not data:
                 logging.warning(f"SerialConnection: No data received.")
+                self.close()
         return data
+
+    @Decorators.ensure_open
+    def close(self):
+        logging.info(f"Closing serial connection...")
+        time.sleep(1)
+        self._serial.close()
+
+    def open(self):
+        logging.info(f"Opening serial connection...")
+        self._serial.open()
+
+    def is_open(self):
+        return self._serial.is_open
