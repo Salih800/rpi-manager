@@ -52,15 +52,16 @@ class SerialConnection:
 
     @Decorators.ensure_open
     def read_until(self, expected="$GPSACP"):
-        data = self.read_data()
-        while not data.startswith(expected):
+        while True:
             data = self.read_data()
-            logging.warning(f"SerialConnection: {data.encode()}")
+            logging.warning(f"SerialConnection: {data.encode()} | {expected.encode()}")
             if not data:
                 logging.warning(f"SerialConnection: No data received.")
                 self.close()
                 break
-        return data
+            if data.startswith(expected):
+                return data
+
 
     @Decorators.ensure_open
     def close(self):
