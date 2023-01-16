@@ -68,13 +68,13 @@ class CameraManager(Thread, metaclass=Singleton):
     @staticmethod
     def draw_date_time(frame):
         date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        draw_text(frame, date_time, (20, 20), text_size=0.5, text_thickness=2)
+        draw_text(frame, date_time, (15, 15), text_size=0.5, text_thickness=1)
 
     def draw_gps_data(self, frame):
         gps_data = self._parent.gps_reader.get_drawable_gps_data()
         if gps_data is not None:
             width, height = frame.shape[1], frame.shape[0]
-            draw_text(frame, gps_data, (20, height - 20), text_size=0.5, text_thickness=2)
+            draw_text(frame, gps_data, (15, height - 15), text_size=0.5, text_thickness=1)
 
     def stop(self):
         self.running = False
