@@ -18,6 +18,7 @@ class DeviceConfig:
         self.speed_limit = config["speed_limit"]
         self.gps_settings = Dict2Class(config["gps_settings"])
         self.camera_settings = Dict2Class(config["camera_settings"])
+        self.stream_settings = Dict2Class(config["stream_settings"])
 
     def __str__(self):
         return (f"Hostname: {self.hostname} | "

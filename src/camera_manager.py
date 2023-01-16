@@ -109,7 +109,7 @@ class CameraManager(Thread, metaclass=Singleton):
 
     def get_rtsp_frame(self):
         frame = self.get_frame()
-        return cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        return frame[:, :, ::-1]  # BGR to RGB
 
     # def get_frame(self):
     #     if not self.camera.isOpened():

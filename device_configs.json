@@ -1,21 +1,24 @@
 {
     "default": {
         "device_type": "garbage",
-        "vehicle_id": "34TEST34",
-        "maximum_garbage_distance": 50,
-        "gps_port": "/dev/ttyACM0",
-        "detection_model": {
-            "name": "garbage_v1.pt",
-            "size": 256
+        "vehicle_id": "34EFL089",
+        "maximum_garbage_distance": 30,
+        "speed_limit": 5,
+        "gps_settings": {
+            "port": "/dev/ttyUSB1",
+            "baudrate": 115200,
+            "timeout": 5
         },
-        "program": "ContainerVehicle-Online.py",
-        "camera_port": 0,
-        "camera_rotation": 0,
-        "camera_fourcc": "MJPG",
-        "streaming_width": 720,
-        "camera_width": "1280",
-        "camera_height": "720",
-        "speed_limit": 5
+        "stream_settings": {
+            "path": "autopi-1"
+        },
+        "camera_settings": {
+            "port": "/dev/video0",
+            "rotation": 0,
+            "fourcc": "MJPG",
+            "width": 640,
+            "height": 480
+        }
     },
     "autopi-2b435399e33b": {
         "device_type": "garbage",
@@ -27,13 +30,15 @@
             "baudrate": 115200,
             "timeout": 1
         },
+        "stream_settings": {
+            "path": "autopi-1"
+        },
         "camera_settings": {
             "port": "/dev/video0",
             "rotation": 0,
             "fourcc": "MJPG",
             "width": 640,
-            "height": 480,
-            "streaming_width": 640
+            "height": 480
         }
     },
     "autopi-004346de8481": {
@@ -46,13 +51,15 @@
             "baudrate": 115200,
             "timeout": 5
         },
+        "stream_settings": {
+            "path": "autopi-1"
+        },
         "camera_settings": {
             "port": "/dev/video0",
             "rotation": 0,
             "fourcc": "MJPG",
             "width": 640,
-            "height": 480,
-            "streaming_width": 640
+            "height": 480
         }
     },
     "rpi-1": {
@@ -65,13 +72,15 @@
             "baudrate": 115200,
             "timeout": 5
         },
+        "stream_settings": {
+            "path": "autopi-1"
+        },
         "camera_settings": {
             "port": "/dev/video0",
             "rotation": 0,
             "fourcc": "YUYV",
             "width": 1280,
-            "height": 960,
-            "streaming_width": 640
+            "height": 960
         }
     }
 }

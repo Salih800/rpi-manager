@@ -62,7 +62,7 @@ class VehicleController(threading.Thread, DeviceConfig):
             if self.streamer.is_alive():
                 return
         self.streamer = RTSPStreamer(parent=self,
-                                     path="rtsp://93.113.96.30:8554/live")
+                                     settings=self.stream_settings)
 
     def stop_streamer(self):
         if self.streamer is not None:

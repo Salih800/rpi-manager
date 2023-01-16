@@ -1,10 +1,12 @@
-# import logging
+import logging
 from threading import Thread
 import subprocess
 # from queue import Queue
 
+import time
 import numpy as np
 import psutil
+from constants.urls import url_stream
 
 
 def check_process(pid):
@@ -20,23 +22,26 @@ def check_process(pid):
     return False
 
 
-def writer(path, width, height, fps=25):
+def writer(path, width, height, fps=25, loglevel='warning'):
+    logging.info(f"Starting writer: {path} @ {width}x{height} @ {fps}fps")
     command = ["ffmpeg", "-f", "rawvideo", "-pix_fmt", "rgb24",
                "-s", f"{width}x{height}", "-r", f"{fps}", "-i", "pipe:",
                "-c:v", "libx264", "-preset", "ultrafast", "-tune", "zerolatency",
-               "-pix_fmt", "yuv420p", "-loglevel", "error",
+               "-vf", ("drawtext=x=10:y=10:fontsize=24:fontcolor=white:"
+                       "text='%{localtime\:%Y-%m-%d %H.%M.%S}':box=1:boxcolor=black@1"),
+               "-pix_fmt", "yuv420p", "-loglevel", loglevel,
                "-f", "rtsp", "-rtsp_transport", "tcp", path]
     return subprocess.Popen(command, stdin=subprocess.PIPE)
 
 
 class RTSPStreamer(Thread):
-    def __init__(self, parent, path):
+    def __init__(self, parent, settings):
         Thread.__init__(self, daemon=True, name="RTSPStreamer")
         self.running = True
 
         self._parent = parent
 
-        self.path = path
+        self.url = url_stream + settings.path
 
         self.writer = None
 
@@ -59,11 +64,17 @@ class RTSPStreamer(Thread):
     def run(self):
         while self.running:
             # frame = self.writer_queue.get()
+            start_time = time.time()
             frame = self._parent.camera_manager.get_frame()
+            get_time = time.time() - start_time
             if frame is None:
                 self.stop()
                 break
             self.write(frame)
+            write_time = time.time() - start_time - get_time
+            logging.info(f"Get frame: {get_time:.4f}s, "
+                         f"Write frame: {write_time:.4f}s, "
+                         f"Total: {get_time + write_time:.4f}s")
 
     def start_writer(self):
         if self.writer is not None:
@@ -71,7 +82,7 @@ class RTSPStreamer(Thread):
                 return
         else:
             settings = self._parent.camera_manager.get_camera_info()
-            self.writer = writer(self.path,
+            self.writer = writer(self.url,
                                  settings["width"],
                                  settings["height"],
                                  settings["fps"])
