@@ -1,7 +1,7 @@
-import logging
+# import logging
 from threading import Thread
 import subprocess
-from queue import Queue
+# from queue import Queue
 
 import numpy as np
 import psutil
@@ -39,7 +39,7 @@ class RTSPStreamer(Thread):
 
         self.writer = None
 
-        self.writer_queue = Queue(maxsize=30)
+        # self.writer_queue = Queue(maxsize=30)
 
         self.running = True
         self.start()
@@ -52,8 +52,8 @@ class RTSPStreamer(Thread):
             .tobytes()
         )
 
-    def put_frame(self, frame):
-        self.writer_queue.put(frame)
+    # def put_frame(self, frame):
+    #     self.writer_queue.put(frame)
 
     def run(self):
         while self.running:

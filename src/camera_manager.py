@@ -55,15 +55,15 @@ class CameraManager(Thread, metaclass=Singleton):
                 self.draw_date_time(frame)
                 self.draw_gps_data(frame)
                 self.last_frame = frame
-                self.put_to_stream_queue()
+                # self.put_to_stream_queue()
             else:
                 self.last_frame = None
                 logging.warning("Camera read failed!")
                 self.camera.release()
 
-    def put_to_stream_queue(self):
-        frame = cv2.cvtColor(self.last_frame, cv2.COLOR_BGR2RGB)
-        self._parent.streamer.put_frame(frame)
+    # def put_to_stream_queue(self):
+    #     frame = cv2.cvtColor(self.last_frame, cv2.COLOR_BGR2RGB)
+    #     self._parent.streamer.put_frame(frame)
 
     @staticmethod
     def draw_date_time(frame):
@@ -106,6 +106,10 @@ class CameraManager(Thread, metaclass=Singleton):
 
     def get_frame(self):
         return self.last_frame
+
+    def get_rtsp_frame(self):
+        frame = self.get_frame()
+        return cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     # def get_frame(self):
     #     if not self.camera.isOpened():

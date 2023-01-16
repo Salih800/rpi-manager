@@ -3,6 +3,8 @@ psutil
 ffmpeg-python
 pyserial
 imutils
+opencv-python
+numpy
 
 # pynmea2
 # imutils
