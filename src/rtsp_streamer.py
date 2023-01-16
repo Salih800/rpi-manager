@@ -73,17 +73,17 @@ class RTSPStreamer(Thread):
     def run(self):
         while self.running:
             # frame = self.writer_queue.get()
-            start_time = time.time()
+            # start_time = time.time()
             frame = self._parent.camera_manager.get_frame()
-            get_time = time.time() - start_time
+            # get_time = time.time() - start_time
             if frame is None:
                 self.stop()
                 break
             self.write(frame)
-            write_time = time.time() - start_time - get_time
-            logging.info(f"Get frame: {get_time:.4f}s, "
-                         f"Write frame: {write_time:.4f}s, "
-                         f"Total: {get_time + write_time:.4f}s")
+            # write_time = time.time() - start_time - get_time
+            # logging.info(f"Get frame: {get_time:.4f}s, "
+            #              f"Write frame: {write_time:.4f}s, "
+            #              f"Total: {get_time + write_time:.4f}s")
 
     def start_writer(self):
         start_time = time.time()
@@ -97,7 +97,7 @@ class RTSPStreamer(Thread):
                                  settings["width"],
                                  settings["height"],
                                  settings["fps"])
-        logging.info(f"Writer started in {time.time() - start_time:.4f}s")
+        # logging.info(f"Writer started in {time.time() - start_time:.4f}s")
 
     def stop_writer(self):
         if self.writer is not None:
