@@ -45,26 +45,12 @@ class RTSPStreamer(Thread):
         self.start()
 
     def write(self, frame):
-        # logging.info("Writing frame")
-        if self.writer is not None:
-            if not check_process(self.writer.pid):
-                self.writer.stdin.write(
-                    frame
-                    .astype(np.uint8)
-                    .tobytes()
-                )
-        else:
-            settings = self._parent.camera_manager.get_camera_info()
-            self.writer = writer(self.path,
-                                 settings["width"],
-                                 settings["height"],
-                                 settings["fps"])
+        self.start_writer()
         self.writer.stdin.write(
             frame
             .astype(np.uint8)
             .tobytes()
         )
-        # logging.info("Frame written")
 
     def put_frame(self, frame):
         self.writer_queue.put(frame)
@@ -77,7 +63,23 @@ class RTSPStreamer(Thread):
                 self.stop()
             self.write(frame)
 
+    def start_writer(self):
+        if self.writer is not None:
+            if not check_process(self.writer.pid):
+                return
+        else:
+            settings = self._parent.camera_manager.get_camera_info()
+            self.writer = writer(self.path,
+                                 settings["width"],
+                                 settings["height"],
+                                 settings["fps"])
+
+    def stop_writer(self):
+        if self.writer is not None:
+            self.writer.stdin.close()
+            self.writer.wait()
+            self.writer = None
+
     def stop(self):
         self.running = False
-        self.writer.stdin.close()
-        self.writer.wait()
+        self.stop_writer()
