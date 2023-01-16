@@ -3,7 +3,7 @@ from threading import Thread
 import subprocess
 # from queue import Queue
 
-import time
+# import time
 import numpy as np
 import psutil
 from constants.urls import url_stream
@@ -73,20 +73,20 @@ class RTSPStreamer(Thread):
     def run(self):
         while self.running:
             # frame = self.writer_queue.get()
-            start_time = time.time()
+            # start_time = time.time()
             frame = self._parent.camera_manager.get_frame()
-            get_time = time.time() - start_time
+            # get_time = time.time() - start_time
             if frame is None:
                 self.stop()
                 break
             self.write(frame)
-            write_time = time.time() - start_time - get_time
-            logging.info(f"Get frame: {get_time:.4f}s, "
-                         f"Write frame: {write_time:.4f}s, "
-                         f"Total: {get_time + write_time:.4f}s")
+            # write_time = time.time() - start_time - get_time
+            # logging.info(f"Get frame: {get_time:.4f}s, "
+            #              f"Write frame: {write_time:.4f}s, "
+            #              f"Total: {get_time + write_time:.4f}s")
 
     def start_writer(self):
-        start_time = time.time()
+        # start_time = time.time()
         if self.writer is not None:
             # if not check_process(self.writer.pid):
             #     return
