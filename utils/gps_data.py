@@ -95,7 +95,10 @@ class GPSData:
         return self.gps_string
 
     def to_camera(self):
-        return f"{self.lat}{self.lat_dir},{self.lng}{self.lng_dir},{self.cog},{self.spkm}kmh"
+        if self.fix2d or self.fix3d:
+            return f"{self.lat}{self.lat_dir},{self.lng}{self.lng_dir},{self.cog},{self.spkm}kmh"
+        else:
+            return "NO FIX"
 
     def is_valid(self):
         return self.fix2d or self.fix3d
