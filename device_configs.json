@@ -23,7 +23,7 @@
         "maximum_garbage_distance": 30,
         "speed_limit": 5,
         "gps_settings": {
-            "port": "/dev/ttyUSB1",
+            "port": "/dev/pts/4",
             "baudrate": 115200,
             "timeout": 1
         },
