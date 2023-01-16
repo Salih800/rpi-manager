@@ -68,7 +68,7 @@ class CameraManager(Thread, metaclass=Singleton):
     @staticmethod
     def draw_date_time(frame):
         date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        draw_text(frame, date_time, (15, 15), text_size=0.5, text_thickness=1)
+        draw_text(frame, date_time, (15, 25), text_size=0.5, text_thickness=1)
 
     def draw_gps_data(self, frame):
         gps_data = self._parent.gps_reader.get_drawable_gps_data()
