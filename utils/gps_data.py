@@ -10,6 +10,20 @@ def dd2dms(dd):
     return round(deg * 100 + mnt + sec / 100, 4)
 
 
+def ddm2dd(ddm):
+    ddm = float(ddm)
+    degrees = int(ddm // 100)
+    minutes = (ddm % 100) / 60
+    return round(degrees + minutes, 6)
+
+
+def dd2ddm(dd):
+    dd = float(dd)
+    degrees = int(dd)
+    minutes = (dd % 1) * 60
+    return round(degrees * 100 + minutes, 4)
+
+
 def dms2dd(dms):
     dms = float(dms)
     degrees = int(dms // 100)
@@ -55,10 +69,10 @@ class GPSData:
             self.local_date_str = self.local_date.strftime("%y%m%d-%H%M%S")
 
             self.lat_dir = self.lat[-1]
-            self.lat = dms2dd(self.lat[:-1])
+            self.lat = ddm2dd(self.lat[:-1])
 
             self.lng_dir = self.lng[-1]
-            self.lng = dms2dd(self.lng[:-1])
+            self.lng = ddm2dd(self.lng[:-1])
 
             self.gps_location = {"lat": self.lat, "lng": self.lng}
 
