@@ -52,8 +52,8 @@ class CameraManager(Thread, metaclass=Singleton):
             ret, frame = self.camera.read()
             if ret:
                 frame = imutils.rotate(frame, self.rotation)
-                self.draw_date_time(frame)
-                self.draw_gps_data(frame)
+                # self.draw_date_time(frame)
+                # self.draw_gps_data(frame)
                 self.last_frame = frame
                 # self.put_to_stream_queue()
             else:
@@ -132,18 +132,18 @@ class CameraManager(Thread, metaclass=Singleton):
     #         time.sleep(1)
     #         return None
 
-    def get_streaming_frame(self, streaming_width=720):
-        frame = self.get_frame()
-
-        if frame is not None:
-            frame = cv2.resize(frame, (streaming_width, int(streaming_width * frame.shape[0] / frame.shape[1])))
-            encoded, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, jpg_save_quality])
-
-            message = byte_seperator + base64.b64encode(buffer) + byte_seperator
-            return message
-
-        else:
-            return None
+    # def get_streaming_frame(self, streaming_width=720):
+    #     frame = self.get_frame()
+    #
+    #     if frame is not None:
+    #         frame = cv2.resize(frame, (streaming_width, int(streaming_width * frame.shape[0] / frame.shape[1])))
+    #         encoded, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, jpg_save_quality])
+    #
+    #         message = byte_seperator + base64.b64encode(buffer) + byte_seperator
+    #         return message
+    #
+    #     else:
+    #         return None
 
     def start_picture_save(self, photo_name, location_id):
         Thread(target=self.save_picture, daemon=True, name="save_picture", args=(photo_name, location_id)).start()

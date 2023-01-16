@@ -77,6 +77,7 @@ class RTSPStreamer(Thread):
                          f"Total: {get_time + write_time:.4f}s")
 
     def start_writer(self):
+        start_time = time.time()
         if self.writer is not None:
             if not check_process(self.writer.pid):
                 return
@@ -86,6 +87,7 @@ class RTSPStreamer(Thread):
                                  settings["width"],
                                  settings["height"],
                                  settings["fps"])
+        logging.info(f"Writer started in {time.time() - start_time:.4f}s")
 
     def stop_writer(self):
         if self.writer is not None:

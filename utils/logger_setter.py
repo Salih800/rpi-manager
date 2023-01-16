@@ -43,10 +43,10 @@ def set_logger(log_name="rpi-default"):
     file_handler = logging.FileHandler(log_filename)
     file_handler.setFormatter(logging.Formatter(fmt))
 
-    stream_handler = logging.StreamHandler()
-    stream_handler.setLevel(logging.INFO)
-    stream_handler.setFormatter(CustomFormatter(fmt))
-
-    logger.addHandler(stream_handler)
+    # stream_handler = logging.StreamHandler()
+    # stream_handler.setLevel(logging.INFO)
+    # stream_handler.setFormatter(CustomFormatter(fmt))
+    #
+    # logger.addHandler(stream_handler)
     logger.addHandler(file_handler)
     return logger
