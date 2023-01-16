@@ -23,7 +23,8 @@ def check_process(pid):
 def writer(path, width, height, fps=25):
     command = ["ffmpeg", "-f", "rawvideo", "-pix_fmt", "rgb24",
                "-s", f"{width}x{height}", "-r", f"{fps}", "-i", "pipe:",
-               "-b:v", "2M", "-pix_fmt", "yuv420p", "-loglevel", "error",
+               "-c:v", "libx264", "-preset", "ultrafast", "-tune", "zerolatency",
+               "-pix_fmt", "yuv420p", "-loglevel", "error",
                "-f", "rtsp", "-rtsp_transport", "tcp", path]
     return subprocess.Popen(command, stdin=subprocess.PIPE)
 
