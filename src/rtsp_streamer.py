@@ -27,8 +27,8 @@ def writer(path, width, height, fps=25, loglevel='warning'):
     command = ["ffmpeg", "-f", "rawvideo", "-pix_fmt", "rgb24",
                "-s", f"{width}x{height}", "-r", f"{fps}", "-i", "pipe:",
                "-c:v", "libx264", "-preset", "ultrafast", "-tune", "zerolatency",
-               "-vf", ("drawtext=x=10:y=10:fontsize=24:fontcolor=white:"
-                       "text='%{localtime\:%Y-%m-%d %H.%M.%S}':box=1:boxcolor=black@1"),
+               # "-vf", ("drawtext=x=10:y=10:fontsize=24:fontcolor=white:"
+               #         "text='%{localtime\:%Y-%m-%d %H.%M.%S}':box=1:boxcolor=black@1"),
                "-pix_fmt", "yuv420p", "-loglevel", loglevel,
                "-f", "rtsp", "-rtsp_transport", "tcp", path]
     return subprocess.Popen(command, stdin=subprocess.PIPE)
@@ -73,17 +73,17 @@ class RTSPStreamer(Thread):
     def run(self):
         while self.running:
             # frame = self.writer_queue.get()
-            # start_time = time.time()
+            start_time = time.time()
             frame = self._parent.camera_manager.get_frame()
-            # get_time = time.time() - start_time
+            get_time = time.time() - start_time
             if frame is None:
                 self.stop()
                 break
             self.write(frame)
-            # write_time = time.time() - start_time - get_time
-            # logging.info(f"Get frame: {get_time:.4f}s, "
-            #              f"Write frame: {write_time:.4f}s, "
-            #              f"Total: {get_time + write_time:.4f}s")
+            write_time = time.time() - start_time - get_time
+            logging.info(f"Get frame: {get_time:.4f}s, "
+                         f"Write frame: {write_time:.4f}s, "
+                         f"Total: {get_time + write_time:.4f}s")
 
     def start_writer(self):
         start_time = time.time()

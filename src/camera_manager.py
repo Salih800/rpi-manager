@@ -52,8 +52,8 @@ class CameraManager(Thread, metaclass=Singleton):
             ret, frame = self.camera.read()
             if ret:
                 frame = imutils.rotate(frame, self.rotation)
-                # self.draw_date_time(frame)
-                # self.draw_gps_data(frame)
+                self.draw_date_time(frame)
+                self.draw_gps_data(frame)
                 self.last_frame = frame
                 # self.put_to_stream_queue()
             else:
