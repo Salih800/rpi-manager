@@ -52,11 +52,20 @@ class RTSPStreamer(Thread):
 
     def write(self, frame):
         self.start_writer()
-        self.writer.stdin.write(
-            frame
-            .astype(np.uint8)
-            .tobytes()
-        )
+        try:
+            self.writer.stdin.write(
+                frame
+                .astype(np.uint8)
+                .tobytes()
+            )
+        except BrokenPipeError:
+            self.stop_writer()
+            self.start_writer()
+            self.writer.stdin.write(
+                frame
+                .astype(np.uint8)
+                .tobytes()
+            )
 
     # def put_frame(self, frame):
     #     self.writer_queue.put(frame)
@@ -79,8 +88,9 @@ class RTSPStreamer(Thread):
     def start_writer(self):
         start_time = time.time()
         if self.writer is not None:
-            if not check_process(self.writer.pid):
-                return
+            # if not check_process(self.writer.pid):
+            #     return
+            return
         else:
             settings = self._parent.camera_manager.get_camera_info()
             self.writer = writer(self.url,
