@@ -1,4 +1,4 @@
-import base64
+# import base64
 import shutil
 import logging
 import os
@@ -8,7 +8,7 @@ from threading import Thread
 
 from constants.numbers import (max_photo_count, minimum_photo_size, max_video_duration,
                                minimum_video_size, jpg_save_quality)
-from constants.others import byte_seperator
+# from constants.others import byte_seperator
 from utils.singleton import Singleton
 from constants.folders import path_to_upload, recorded_files
 from tools import check_file_size
