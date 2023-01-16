@@ -43,5 +43,5 @@ class Server(SerialConnection, Thread):
 
 
 if __name__ == '__main__':
-    server = Server(port="/dev/pts/4", baudrate=115200, timeout=1)
+    server = Server(port="/dev/pts/2", baudrate=115200, timeout=5)
     server.join()
