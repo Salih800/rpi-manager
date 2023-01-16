@@ -61,6 +61,7 @@ class RTSPStreamer(Thread):
             frame = self._parent.camera_manager.get_frame()
             if frame is None:
                 self.stop()
+                break
             self.write(frame)
 
     def start_writer(self):
