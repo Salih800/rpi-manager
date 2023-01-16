@@ -30,9 +30,9 @@
         "camera_settings": {
             "port": "/dev/video0",
             "rotation": 0,
-            "fourcc": "YUYV",
-            "width": 1280,
-            "height": 960,
+            "fourcc": "MJPG",
+            "width": 640,
+            "height": 480,
             "streaming_width": 640
         }
     },
