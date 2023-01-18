@@ -26,7 +26,7 @@ def writer(path, width, height, fps=25, loglevel='warning'):
     logging.info(f"Starting writer: {path} @ {width}x{height} @ {fps}fps")
     command = ["ffmpeg", "-f", "rawvideo", "-pix_fmt", "rgb24",
                "-s", f"{width}x{height}",
-               # "-r", f"{fps}",
+               "-r", f"{fps}",
                "-i", "pipe:",
                "-r", f"{fps}",
                "-c:v", "libx264", "-preset", "ultrafast", "-tune", "zerolatency",
