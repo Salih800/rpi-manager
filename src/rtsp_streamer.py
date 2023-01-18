@@ -28,7 +28,7 @@ def writer(path, width, height, fps=25, loglevel='warning'):
                "-s", f"{width}x{height}",
                "-r", f"{fps}",
                "-i", "pipe:",
-               "-r", f"{fps}",
+               "-vf", f"fps={fps}",
                "-c:v", "libx264", "-preset", "ultrafast", "-tune", "zerolatency",
                # "-vf", ("drawtext=x=10:y=10:fontsize=24:fontcolor=white:"
                #         "text='%{localtime\:%Y-%m-%d %H.%M.%S}':box=1:boxcolor=black@1"),
