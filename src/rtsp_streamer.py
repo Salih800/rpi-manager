@@ -91,7 +91,9 @@ class RTSPStreamer(Thread):
 
     def run(self):
         while self.running:
-            self.start_writer()
+            # self.start_writer()
+            self.writer = writer(self.url, self.width, self.height)
+            self.writer.wait()
             time.sleep(5)
             # frame = self.writer_queue.get()
             # start_time = time.time()
