@@ -11,7 +11,7 @@ import psutil
 
 from constants.folders import camera_records
 from constants.urls import url_stream
-from utils import request_handler as rh
+# from utils import request_handler as rh
 
 
 def check_process(pid):
