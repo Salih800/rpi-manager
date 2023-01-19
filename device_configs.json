@@ -10,7 +10,9 @@
             "timeout": 5
         },
         "stream_settings": {
-            "path": "autopi-1"
+            "path": "autopi-1",
+            "width": 640,
+            "height": 480
         },
         "camera_settings": {
             "port": "/dev/video0",
@@ -31,7 +33,9 @@
             "timeout": 1
         },
         "stream_settings": {
-            "path": "autopi-1"
+            "path": "autopi-1",
+            "width": 640,
+            "height": 480
         },
         "camera_settings": {
             "port": "/dev/video0",
@@ -52,7 +56,9 @@
             "timeout": 5
         },
         "stream_settings": {
-            "path": "autopi-1"
+            "path": "autopi-1",
+            "width": 640,
+            "height": 480
         },
         "camera_settings": {
             "port": "/dev/video0",
@@ -73,7 +79,9 @@
             "timeout": 5
         },
         "stream_settings": {
-            "path": "autopi-1"
+            "path": "autopi-1",
+            "width": 640,
+            "height": 480
         },
         "camera_settings": {
             "port": "/dev/video0",
