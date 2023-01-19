@@ -41,12 +41,12 @@ def writer(path, width=640, height=480, fps=25, loglevel='warning'):
     #            #         "text='%{localtime\:%Y-%m-%d %H.%M.%S}':box=1:boxcolor=black@1"),
     #            "-pix_fmt", "yuv420p", "-loglevel", loglevel,
     #            "-f", "rtsp", "-rtsp_transport", "tcp", path]
-    command = (f"ffmpeg -i " + path + " " +
+    command = (f"ffmpeg -i /dev/video0 " +
                f"-c:v libx264 -preset ultrafast -tune zerolatency -crf 25 -loglevel {loglevel} "
                f"-vf ""drawtext=x=10:y=10:fontsize=24:fontcolor=white:text='%{localtime}':box=1:boxcolor=black@1"" "
                "-f tee -map 0:v """"[f=segment:segment_list=out.list:segment_time=600:segment_wrap=6:strftime=1]'"""""
                + camera_records +
-               """%Y-%m-%d_%H-%M-%S.mp4'|[f=rtsp:rtsp_transport=tcp]""" + url_stream).split()
+               """%Y-%m-%d_%H-%M-%S.mp4'|[f=rtsp:rtsp_transport=tcp]""" + path).split()
     logging.info(f"Starting writer: {command}")
     return subprocess.Popen(command, stdin=subprocess.PIPE)
 
