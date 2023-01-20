@@ -1,11 +1,11 @@
 requests
 psutil
-ffmpeg-python
 pyserial
 imutils
-opencv-python
 numpy
 
+ffmpeg-python
+#opencv-python
 # pynmea2
 # imutils
 # pillow

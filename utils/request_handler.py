@@ -13,6 +13,15 @@ def check_connection(url="https://cdn.atiknakit.com", timeout=5):
     return False
 
 
+def connect(host='http://google.com'):
+    import urllib.request
+    try:
+        urllib.request.urlopen(host) #Python 3.x
+        return True
+    except:
+        return False
+
+
 def post(url, **kwargs):
     response = requests.Response()
     response.status_code = -1
