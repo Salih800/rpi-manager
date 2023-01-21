@@ -29,9 +29,9 @@ def main():
             system_checker = SystemChecker()
 
         connection = rh.check_connection()
-        print(f"check_connection: {connection}")
+        logging.info(f"check_connection: {connection}")
         connection = rh.connect()
-        print(f"connect: {connection}")
+        logging.info(f"connect: {connection}")
 
         if system_checker.is_enough_memory():
             if system_checker.is_enough_space():
