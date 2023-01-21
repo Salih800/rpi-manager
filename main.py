@@ -31,7 +31,7 @@ def main():
         connection = rh.check_connection()
         print(f"check_connection: {connection}")
         connection = rh.connect()
-        print(f"connection: {connection}")
+        print(f"connect: {connection}")
 
         if system_checker.is_enough_memory():
             if system_checker.is_enough_space():
