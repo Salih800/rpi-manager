@@ -116,12 +116,12 @@ class SPM2Conn(I2CConn):
 
         # Validate response
         if not res:
-            log.warn("Empty response received when reading register {:}".format(register))
+            log.warning("Empty response received when reading register {:}".format(register))
 
             raise Exception("Empty response received when reading register {:}".format(register))
 
         if res == [r for r in res if r == 0xFF]:  # Are all bytes 0xFF?
-            log.warn("Received seemingly invalid response when reading register {:}: {:}".format(register, res))
+            log.warning("Received seemingly invalid response when reading register {:}: {:}".format(register, res))
 
             raise Exception("Received seemingly invalid response when reading register {:}: {:}".format(register, res))
 

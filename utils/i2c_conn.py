@@ -39,11 +39,11 @@ class I2CConn(object):
         if log.isEnabledFor(logging.DEBUG):
             log.debug("Initializing I2C connection using settings: {:}".format(settings))
 
-        if not "port" in settings:
+        if "port" not in settings:
             raise ValueError("I2C 'port' must be specified in settings")
         self._port = settings["port"]
 
-        if not "address" in settings:
+        if "address" not in settings:
             raise ValueError("I2C 'address' must be specified in settings")
         self._address = settings["address"]
 
@@ -53,9 +53,9 @@ class I2CConn(object):
 
     @retry(stop_max_attempt_number=3, wait_fixed=1000)
     def open(self):
-        log.info("Opening I2C connection on port: {:}".format(self._port))
+        log.debug("Opening I2C connection on port: {:}".format(self._port))
 
-        try :
+        try:
             self._bus.open(self._port)
             self._is_open = True
 
@@ -87,29 +87,27 @@ class I2CConn(object):
     def read_byte(self, register):
         byte = self._bus.read_byte_data(self._address, register)
 
-        # if log.isEnabledFor(logging.TRACE):
-        log.info("Read register {:d}: {:08b}".format(register, byte))
+        if log.isEnabledFor(logging.DEBUG):
+            log.debug("Read register {:d}: {:08b}".format(register, byte))
 
         return byte
 
     @Decorators.ensure_open
     def read_block(self, register, length):
 
-        # if log.isEnabledFor(logging.TRACE):
-        log.info("Reading block with a length of {:d} starting from register {:d}".format(length, register))
+        if log.isEnabledFor(logging.DEBUG):
+            log.debug("Reading block with a length of {:d} starting from register {:d}".format(length, register))
 
         block = self._bus.read_i2c_block_data(self._address, register, length)
 
-        # if log.isEnabledFor(logging.TRACE):
-        #     for idx, byt in enumerate(block):
-        #         log.trace("Read byte {:d}/{:d} in block: {:08b}".format(idx, len(block), byt))
+        if log.isEnabledFor(logging.DEBUG):
+            for idx, byt in enumerate(block):
+                log.debug("Read byte {:d}/{:d} in block: {:08b}".format(idx, len(block), byt))
 
         return block
 
     @Decorators.ensure_open
     def read(self, register, length=1):
-        ret = None
-        
         if length > 1:
             ret = self.read_block.undecorated(self, register, length)
         else:
@@ -133,7 +131,8 @@ class I2CConn(object):
 
         if log.isEnabledFor(logging.DEBUG):
             for idx, byt in enumerate(block):
-                log.debug("Wrote byte {:d}/{:d} of block to register {:d}: {:08b}".format(idx, len(block), register, byt))
+                log.debug("Wrote byte {:d}/{:d} of block to register {:d}: {:08b}"
+                          .format(idx, len(block), register, byt))
 
         if self.on_written:
             self.on_written(register, block)
@@ -165,7 +164,7 @@ class I2CConn(object):
     def _concat_bytes(self, bytes, bits=10):
         words = []
 
-        for idx in range(0, len(bytes), 2): # Only loop on even numbers
+        for idx in range(0, len(bytes), 2):  # Only loop on even numbers
 
             # Concat bytes
             word = bytes[idx] << 8 | bytes[idx + 1]
