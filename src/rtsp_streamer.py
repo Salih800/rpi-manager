@@ -51,7 +51,7 @@ def writer(path, width=640, height=480, fps=25, loglevel='warning'):
     return subprocess.Popen(command, stdin=subprocess.PIPE)
 
 
-class RTSPStreamer(Thread):
+class RtspStreamer(Thread):
     def __init__(self, parent, settings):
         Thread.__init__(self, daemon=True, name="RTSPStreamer")
         self.running = True

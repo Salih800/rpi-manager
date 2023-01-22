@@ -3,8 +3,10 @@ psutil
 pyserial
 imutils
 numpy
+retrying
+smbus2
 
-ffmpeg-python
+#ffmpeg-python
 #opencv-python
 # pynmea2
 # imutils

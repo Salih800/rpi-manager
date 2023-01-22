@@ -2,14 +2,17 @@ import logging
 import threading
 import time
 
-from src.camera_manager import CameraManager
 from utils.device_config import DeviceConfig
-from src.gps_manager import GPSReader
-# from src.server_listener import Listener
-from tools import check_locations
-from src.file_uploader import upload_gps_data
 from utils.garbage_list_getter import read_garbage_list
-from src.rtsp_streamer import RTSPStreamer
+
+from src.camera_manager import CameraManager
+from src.gps_manager import GpsReader
+from src.file_uploader import upload_gps_data
+from src.rtsp_streamer import RtspStreamer
+from src.spm_manager import SpmManager
+# from src.server_listener import Listener
+
+from tools import check_locations
 
 
 class VehicleController(threading.Thread, DeviceConfig):
@@ -19,7 +22,8 @@ class VehicleController(threading.Thread, DeviceConfig):
 
         self.camera_manager = None
         self.gps_reader = None
-        self.streamer = None
+        self.rtsp_streamer = None
+        self.spm_manager = None
 
         # self.server_listener = Listener(streaming_width=self.streaming_width)
         # self.file_uploader = FileUploader()
@@ -31,11 +35,22 @@ class VehicleController(threading.Thread, DeviceConfig):
         self.running = True
         self.start()
 
+    def start_spm_manager(self):
+        if self.spm_manager is not None:
+            if self.spm_manager.is_alive():
+                return
+        self.spm_manager = SpmManager()
+
+    def stop_spm_manager(self):
+        if self.spm_manager is not None:
+            if self.spm_manager.is_alive():
+                self.spm_manager.stop()
+
     def start_gps_reader(self):
         if self.gps_reader is not None:
             if self.gps_reader.is_alive():
                 return
-        self.gps_reader = GPSReader(parent=self,
+        self.gps_reader = GpsReader(parent=self,
                                     port=self.gps_settings.port,
                                     baudrate=self.gps_settings.baudrate,
                                     timeout=self.gps_settings.timeout)
@@ -58,16 +73,16 @@ class VehicleController(threading.Thread, DeviceConfig):
                 self.camera_manager.stop()
 
     def start_streamer(self):
-        if self.streamer is not None:
-            if self.streamer.is_alive():
+        if self.rtsp_streamer is not None:
+            if self.rtsp_streamer.is_alive():
                 return
-        self.streamer = RTSPStreamer(parent=self,
-                                     settings=self.stream_settings)
+        self.rtsp_streamer = RtspStreamer(parent=self,
+                                          settings=self.stream_settings)
 
     def stop_streamer(self):
-        if self.streamer is not None:
-            if self.streamer.is_alive():
-                self.streamer.stop()
+        if self.rtsp_streamer is not None:
+            if self.rtsp_streamer.is_alive():
+                self.rtsp_streamer.stop()
 
     def run(self) -> None:
         self.running = True
