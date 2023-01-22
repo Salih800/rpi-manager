@@ -1,7 +1,7 @@
 import logging
 import time
 
-from i2c_conn import I2CConn
+from utils.i2c_conn import I2CConn
 from retrying import retry
 
 
