@@ -102,6 +102,7 @@ class VehicleController(threading.Thread, DeviceConfig):
 
             if self.is_enough_space():
                 self.start_gps_reader()
+                self.start_spm_manager()
                 # self.start_camera_manager()
                 # self.start_streamer()
 
@@ -137,5 +138,6 @@ class VehicleController(threading.Thread, DeviceConfig):
         self.running = False
         self.stop_camera_manager()
         self.stop_gps_reader()
+        self.stop_spm_manager()
         # self.server_listener.stop()
         # self.file_uploader.stop()
