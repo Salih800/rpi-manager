@@ -19,11 +19,11 @@ class SpmManager(Thread):
 
     def run(self):
         logging.info("SpmManager: started")
+        self._is_running = True
         while self._is_running:
             try:
                 self._spm = spm2_conn.SPM2Conn()
                 self._spm.init(self._settings)
-                self._is_running = True
                 while self._is_running:
                     res = self._spm.heartbeat()
                     logging.info(f"SpmManager: SPM heartbeat: {res}")
