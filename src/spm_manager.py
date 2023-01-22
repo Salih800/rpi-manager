@@ -2,7 +2,11 @@ import time
 from threading import Thread
 import logging
 
+import RPi.GPIO as GPIO
+
 from utils import spm2_conn
+
+from constants.gpio_pins import *
 
 
 settings = {"port": 1, "address": 8}
@@ -30,6 +34,7 @@ class SpmManager(Thread):
                     time.sleep(60)
             except Exception as e:
                 logging.error(f"SpmManager: {e}", exc_info=True)
+                rst_spm()
         self.stop()
 
     def stop(self):
@@ -37,3 +42,15 @@ class SpmManager(Thread):
         self._is_running = False
         self._spm.close()
         self._spm = None
+
+
+def rst_spm():
+    logging.warning("SpmManager: Resetting SPM...")
+    GPIO.setmode(MODE)
+    GPIO.setup(SPM_RESET, GPIO.OUT)
+    GPIO.output(SPM_RESET, GPIO.LOW)
+    time.sleep(0.2)
+    GPIO.cleanup()
+    logging.info("SpmManager: SPM reset done")
+
+
