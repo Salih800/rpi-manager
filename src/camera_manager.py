@@ -143,9 +143,9 @@ class CameraManager(Thread, metaclass=Singleton):
         start_time = time.time()
         if self._virtual_port is not None:
             self.camera = cv2.VideoCapture(self._virtual_port)
-            self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
-            self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
-            self.camera.set(cv2.CAP_PROP_FOURCC, self.fourcc)
+            # self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
+            # self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
+            # self.camera.set(cv2.CAP_PROP_FOURCC, self.fourcc)
             if self.camera.isOpened():
                 logging.info(f"Camera {self.port} is opened in {round(time.time() - start_time, 2)} seconds.")
                 logging.info(f"Camera info: {self.get_camera_info()}")
