@@ -75,7 +75,6 @@ def get_probe(path, width, height):
                f"-f v4l2 -i {path}")
     probe = json.loads(sp.check_output(command.split()).decode())
     stream = probe['streams'][0]
-    logging.info(f'Probe: {stream}')
     width = int(stream['width'])
     height = int(stream['height'])
     fps = stream['r_frame_rate']
