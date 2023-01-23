@@ -62,7 +62,7 @@ class CameraManager(Thread, metaclass=Singleton):
             time.sleep(10)
             return
 
-        self._virtual_port = virtual_cameras[0]
+        self._virtual_port = f"/dev/{virtual_cameras[0]}"
         self._virtual_camera = stream_to_virtual_camera(self.port, self._virtual_port, self.width, self.height)
         time.sleep(5)
         if self._virtual_camera is None:
@@ -151,11 +151,11 @@ class CameraManager(Thread, metaclass=Singleton):
             # self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
             # self.camera.set(cv2.CAP_PROP_FOURCC, self.fourcc)
             if self.camera.isOpened():
-                logging.info(f"Camera {self.port} is opened in {round(time.time() - start_time, 2)} seconds.")
+                logging.info(f"Camera {self._virtual_port} is opened in {round(time.time() - start_time, 2)} seconds.")
                 logging.info(f"Camera info: {self.get_camera_info()}")
                 return True
             else:
-                logging.warning(f"Camera {self.port} is not opened!")
+                logging.warning(f"Camera {self._virtual_port} is not opened!")
                 time.sleep(10)
                 raise
         else:

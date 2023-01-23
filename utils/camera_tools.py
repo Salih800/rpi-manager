@@ -41,7 +41,7 @@ def stream_to_virtual_camera(real_camera, virtual_camera, width, height):
     try:
         command = (f"ffmpeg -f v4l2 -s {width}x{height} -i {real_camera} "
                    f"-vf ""drawtext=x=10:y=10:fontsize=24:fontcolor=white:text='%{localtime}':box=1:boxcolor=black@1"" "
-                   f"-f v4l2 -c:v rawvideo -pix_fmt rgb24 /dev/{virtual_camera} "
+                   f"-f v4l2 -c:v rawvideo -pix_fmt rgb24 {virtual_camera} "
                    f"-loglevel warning")
         return sp.Popen(command, shell=True)
     except Exception as e:
@@ -53,7 +53,7 @@ def stream_to_virtual_camera(real_camera, virtual_camera, width, height):
 def stream_to_rtsp(virtual_camera, rtsp_url):
     logging.info(f"Streaming from {virtual_camera} to {rtsp_url}")
     try:
-        command = (f"ffmpeg -f v4l2 -i /dev/{virtual_camera} "
+        command = (f"ffmpeg -f v4l2 -i {virtual_camera} "
                    f"-c:v libx264 -preset ultrafast -tune zerolatency "
                    f"-f rtsp -rtsp_transport tcp {rtsp_url} "
                    f"-loglevel warning")
