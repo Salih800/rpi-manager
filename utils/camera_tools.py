@@ -74,10 +74,11 @@ def get_probe(path, width, height):
                f"-video_size {width}x{height} "
                f"-f v4l2 -i {path}")
     probe = json.loads(sp.check_output(command.split()).decode())
-    logging.info(f'Probe: {probe}')
-    width = int(probe['width'])
-    height = int(probe['height'])
-    fps = probe['r_frame_rate']
+    stream = probe['streams'][0]
+    logging.info(f'Probe: {stream}')
+    width = int(stream['width'])
+    height = int(stream['height'])
+    fps = stream['r_frame_rate']
     return width, height, fps
 
 # def get_frames_from_virtual_camera(virtual_camera):
