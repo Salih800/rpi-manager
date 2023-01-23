@@ -1,10 +1,7 @@
+import json
 import logging
 import subprocess as sp
 import time
-
-
-# import cv2
-# import numpy as np
 
 
 def create_virtual_cameras(count=1):
@@ -41,8 +38,10 @@ def remove_virtual_cameras():
 
 
 def stream_to_virtual_camera(real_camera, virtual_camera, width, height):
-    logging.info(f"Streaming from {real_camera} to {virtual_camera}")
     try:
+        width, height, fps = get_probe(real_camera, width, height)
+        logging.info(f"Streaming from {real_camera} to {virtual_camera} with {width}x{height} @ {fps}fps")
+
         command = (f"ffmpeg -f v4l2 -s {width}x{height} -i {real_camera} "
                    f"-vf ""drawtext=x=10:y=10:fontsize=24:fontcolor=white:text='%{localtime}':box=1:boxcolor=black@1"" "
                    f"-f v4l2 -c:v rawvideo -pix_fmt rgb24 {virtual_camera} "
@@ -66,6 +65,19 @@ def stream_to_rtsp(virtual_camera, rtsp_url):
         logging.error(f"Failed to stream to rtsp: {e}", exc_info=True)
         time.sleep(10)
         return False
+
+
+def get_probe(path, width, height):
+    logging.info(f'Getting probe for {path} with {width}x{height}')
+    command = (f"ffprobe -v quiet -print_format json "
+               f"-show_format -show_streams "
+               f"-video_size {width}x{height} "
+               f"-f v4l2 -i {path}")
+    probe = json.loads(sp.check_output(command.split()).decode())
+    width = int(probe['width'])
+    height = int(probe['height'])
+    fps = probe['r_frame_rate']
+    return width, height, fps
 
 # def get_frames_from_virtual_camera(virtual_camera):
 #     print("Starting virtual camera stream...")
