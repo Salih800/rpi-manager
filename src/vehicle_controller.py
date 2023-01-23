@@ -129,7 +129,7 @@ class VehicleController(threading.Thread, DeviceConfig):
                                     f"{gps_data.spkm}kmh_"
                                     f"{closest_location_id}.jpg")
 
-                        # self.camera_manager.start_picture_save(photo_name=filename, location_id=closest_location_id)
+                        self.camera_manager.start_picture_save(photo_name=filename, location_id=closest_location_id)
 
             time.sleep(1)
 

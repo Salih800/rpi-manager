@@ -9,11 +9,13 @@ from threading import Thread
 from constants.numbers import (max_photo_count, minimum_photo_size, max_video_duration,
                                minimum_video_size, jpg_save_quality)
 # from constants.others import byte_seperator
-from utils.singleton import Singleton
 from constants.folders import path_to_upload, recorded_files
-from tools import check_file_size
-from tools import decode_fourcc
-from tools import draw_text
+from constants.urls import url_stream
+
+from utils.singleton import Singleton
+from utils.camera_tools import *
+
+from tools import check_file_size, decode_fourcc, draw_text
 
 import cv2
 import imutils
@@ -35,31 +37,81 @@ class CameraManager(Thread, metaclass=Singleton):
         self.passed_frame_count = 0
         self.location_id = None
         self.taking_video = False
-        self.last_frame = None
 
+        self._last_frame = None
+        self._virtual_camera = None
+        self._virtual_port = None
+        self._running = False
+
+        self.streamer = None
         self.camera = None
-        self.running = True
+
         self.start()
 
+    def start_virtual_camera(self):
+        if self._virtual_camera is not None:
+            if self._virtual_camera.poll() is None:
+                # logging.warning("Virtual camera is already running!")
+                return
+        virtual_cameras = create_virtual_cameras()
+        if virtual_cameras is None:
+            time.sleep(10)
+            return
+        if len(virtual_cameras) == 0:
+            logging.error("No virtual camera found!")
+            time.sleep(10)
+            return
+
+        self._virtual_port = virtual_cameras[0]
+        self._virtual_camera = stream_to_virtual_camera(self.port, self._virtual_port, self.width, self.height)
+        time.sleep(5)
+        if self._virtual_camera is None:
+            time.sleep(10)
+            self.stop_virtual_camera()
+
+    def stop_virtual_camera(self):
+        if self._virtual_camera is not None:
+            self._virtual_camera.kill()
+            self._virtual_camera = None
+        self._virtual_port = None
+        remove_virtual_cameras()
+
+    def start_streamer(self):
+        if self.streamer is not None:
+            if self.streamer.poll() is None:
+                # logging.warning("Streamer is already running!")
+                return
+        if self._virtual_port is None:
+            logging.error("Virtual camera is not running!")
+            return
+        stream_url = url_stream + "autopi-1"
+        self.streamer = stream_to_rtsp(self._virtual_port, stream_url)
+
+    def stop_streamer(self):
+        if self.streamer is not None:
+            self.streamer.kill()
+            self.streamer = None
+
     def run(self):
-        logging.info("Starting camera manager ...")
-        self.get_camera()
-        while self.running:
-            if not self.camera.isOpened():
-                self.get_camera()
-                time.sleep(1)
-                continue
-            ret, frame = self.camera.read()
-            if ret:
-                frame = imutils.rotate(frame, self.rotation)
-                self.draw_date_time(frame)
-                self.draw_gps_data(frame)
-                self.last_frame = frame
-                # self.put_to_stream_queue()
+        logging.info("Starting camera manager...")
+        self._running = True
+        while self._running:
+            self.start_virtual_camera()
+            self.start_streamer()
+            if self.get_camera():
+                ret, frame = self.camera.read()
+                if ret:
+                    frame = imutils.rotate(frame, self.rotation)
+                    # self.draw_date_time(frame)
+                    # self.draw_gps_data(frame)
+                    self._last_frame = frame
+                    # self.put_to_stream_queue()
+                else:
+                    self._last_frame = None
+                    logging.warning("Camera read failed!")
+                    self.camera.release()
             else:
-                self.last_frame = None
-                logging.warning("Camera read failed!")
-                self.camera.release()
+                time.sleep(0.1)
 
     # def put_to_stream_queue(self):
     #     frame = cv2.cvtColor(self.last_frame, cv2.COLOR_BGR2RGB)
@@ -77,26 +129,35 @@ class CameraManager(Thread, metaclass=Singleton):
             draw_text(frame, gps_data, (15, height - 15), text_size=0.5, text_thickness=1)
 
     def stop(self):
-        self.running = False
+        self._running = False
         self.release()
+        self.stop_streamer()
+        self.stop_virtual_camera()
 
     def get_camera(self):
         if self.camera is not None:
             if self.camera.isOpened():
-                return
-        self.last_frame = None
-        logging.info(f"Trying to get camera {self.port} ...")
+                return True
+        self._last_frame = None
+        logging.info(f"Trying to get camera {self.port}...")
         start_time = time.time()
-        self.camera = cv2.VideoCapture(self.port)
-        self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
-        self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
-        self.camera.set(cv2.CAP_PROP_FOURCC, self.fourcc)
-        if self.camera.isOpened():
-            logging.info(f"Camera {self.port} is opened in {round(time.time() - start_time, 2)} seconds.")
-            logging.info(f"Camera info: {self.get_camera_info()}")
+        if self._virtual_port is not None:
+            self.camera = cv2.VideoCapture(self._virtual_port)
+            self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
+            self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
+            self.camera.set(cv2.CAP_PROP_FOURCC, self.fourcc)
+            if self.camera.isOpened():
+                logging.info(f"Camera {self.port} is opened in {round(time.time() - start_time, 2)} seconds.")
+                logging.info(f"Camera info: {self.get_camera_info()}")
+                return True
+            else:
+                logging.warning(f"Camera {self.port} is not opened!")
+                time.sleep(10)
+                raise
         else:
-            logging.warning(f"Camera {self.port} is not opened!")
+            logging.warning("Virtual camera is not started!")
             time.sleep(10)
+        return False
 
     def get_camera_info(self):
         return {"width": int(self.camera.get(cv2.CAP_PROP_FRAME_WIDTH)),
@@ -105,7 +166,7 @@ class CameraManager(Thread, metaclass=Singleton):
                 "fps": round(self.camera.get(cv2.CAP_PROP_FPS), 2)}
 
     def get_frame(self):
-        return self.last_frame
+        return self._last_frame
 
     def get_rtsp_frame(self):
         frame = self.get_frame()
@@ -220,4 +281,5 @@ class CameraManager(Thread, metaclass=Singleton):
         self.taking_video = False
         if self.camera.isOpened():
             self.camera.release()
+            self.camera = None
         logging.info("Camera released")
