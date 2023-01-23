@@ -2,6 +2,7 @@ import logging
 import subprocess as sp
 import time
 
+
 # import cv2
 # import numpy as np
 
@@ -9,9 +10,10 @@ import time
 def create_virtual_cameras(count=1):
     logging.info(f"Creating {count} virtual camera(s)")
     try:
-        sp.check_output(f"sudo modprobe v4l2loopback "
-                        f"exclusive_caps=1 "
-                        f"devices={count}", shell=True)
+        command = (f"sudo modprobe v4l2loopback "
+                   f"exclusive_caps=1 "
+                   f"devices={count}")
+        sp.check_output(command.split())
         return get_virtual_cameras()
     except Exception as e:
         logging.error(f"Failed to create virtual camera: {e}", exc_info=True)
@@ -20,7 +22,8 @@ def create_virtual_cameras(count=1):
 
 def get_virtual_cameras():
     try:
-        return sp.check_output("ls -1 /sys/devices/virtual/video4linux", shell=True).decode().splitlines()
+        command = "ls -1 /sys/devices/virtual/video4linux"
+        return sp.check_output(command.split()).decode().splitlines()
     except Exception as e:
         logging.error(f"Failed to get virtual cameras: {e}", exc_info=True)
         return []
@@ -29,7 +32,8 @@ def get_virtual_cameras():
 def remove_virtual_cameras():
     logging.info("Removing virtual camera(s)")
     try:
-        sp.check_output("sudo modprobe -r v4l2loopback", shell=True)
+        command = "sudo modprobe -r v4l2loopback"
+        sp.check_output(command.split())
         return True
     except Exception as e:
         logging.error(f"Failed to remove virtual camera: {e}", exc_info=True)
@@ -43,7 +47,7 @@ def stream_to_virtual_camera(real_camera, virtual_camera, width, height):
                    f"-vf ""drawtext=x=10:y=10:fontsize=24:fontcolor=white:text='%{localtime}':box=1:boxcolor=black@1"" "
                    f"-f v4l2 -c:v rawvideo -pix_fmt rgb24 {virtual_camera} "
                    f"-loglevel warning")
-        return sp.Popen(command, shell=True)
+        return sp.Popen(command.split())
     except Exception as e:
         logging.error(f"Failed to stream to virtual camera: {e}", exc_info=True)
         time.sleep(10)
@@ -57,12 +61,11 @@ def stream_to_rtsp(virtual_camera, rtsp_url):
                    f"-c:v libx264 -preset ultrafast -tune zerolatency "
                    f"-f rtsp -rtsp_transport tcp {rtsp_url} "
                    f"-loglevel warning")
-        return sp.Popen(command, shell=True)
+        return sp.Popen(command.split())
     except Exception as e:
         logging.error(f"Failed to stream to rtsp: {e}", exc_info=True)
         time.sleep(10)
         return False
-
 
 # def get_frames_from_virtual_camera(virtual_camera):
 #     print("Starting virtual camera stream...")
