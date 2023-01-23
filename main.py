@@ -11,7 +11,7 @@ from utils.logger_setter import set_logger
 from utils.garbage_list_getter import update_garbage_list
 import utils.request_handler as rh
 
-from tools import (restart_program, get_running_threads,
+from tools import (restart_service, get_running_threads,
                    update_repo, restart_system, get_vehicle_id)
 
 
@@ -38,7 +38,7 @@ def main():
                 if time.time() - update_time > update_wait_time:
                     update_time = time.time()
                     if update_repo() or update_garbage_list():
-                        restart_program()
+                        restart_service()
 
                 if not vehicle_controller.is_alive():
                     vehicle_controller = VehicleController(system_checker.is_enough_space)

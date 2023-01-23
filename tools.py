@@ -99,10 +99,9 @@ def check_locations(gps_data, locations):
     return min_distance, closest_location["id"]
 
 
-def restart_program():
-    logging.info("Restarting the program...")
-    exit(0)
-    # os.execl(sys.executable, sys.executable, *sys.argv)
+def restart_service():
+    logging.info("Restarting the service...")
+    os.system("sudo systemctl restart rpi-manager.service")
 
 
 # check given file is bigger than given size in kb
@@ -155,6 +154,7 @@ def update_repo():
         else:
             logging.info("Repo is updated.")
             install_requirements()
+            restart_service()
             return True
 
     except subprocess.CalledProcessError as stderr:
@@ -204,3 +204,13 @@ def draw_text(img,
 
 def decode_fourcc(fourcc):
     return ''.join([chr((int(fourcc) >> 8 * i) & 0xFF) for i in range(4)])
+
+
+def send_system_command(command):
+    try:
+        logging.info(f"Sending command: {command}")
+        os.system(command)
+    except Exception as e:
+        logging.error(e, exc_info=True)
+        time.sleep(5)
+
