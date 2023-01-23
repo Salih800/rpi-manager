@@ -103,7 +103,7 @@ class VehicleController(threading.Thread, DeviceConfig):
             if self.is_enough_space():
                 self.start_gps_reader()
                 self.start_spm_manager()
-                # self.start_camera_manager()
+                self.start_camera_manager()
                 # self.start_streamer()
 
                 gps_data = self.gps_reader.get_gps_data()
