@@ -143,7 +143,7 @@ class CameraManager(Thread, metaclass=Singleton):
             if self.camera.isOpened():
                 return True
         self._last_frame = None
-        logging.info(f"Trying to get camera {self.port}...")
+        logging.info(f"Trying to get camera {self._virtual_port}...")
         start_time = time.time()
         if self._virtual_port is not None:
             self.camera = cv2.VideoCapture(self._virtual_port)
