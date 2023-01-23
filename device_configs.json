@@ -87,8 +87,8 @@
             "port": "/dev/video0",
             "rotation": 0,
             "fourcc": "YUYV",
-            "width": 1280,
-            "height": 960
+            "width": 640,
+            "height": 480
         }
     }
 }

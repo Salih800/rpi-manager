@@ -95,15 +95,19 @@ class CameraManager(Thread, metaclass=Singleton):
     def run(self):
         logging.info("Starting camera manager...")
         self._running = True
+        log_time = 0
         while self._running:
             self.start_virtual_camera()
             self.start_streamer()
             if self.get_camera():
                 ret, frame = self.camera.read()
                 if ret:
+                    if time.time() - log_time > 60:
+                        logging.info(f"Camera {self.port} is running.")
+                        log_time = time.time()
                     frame = imutils.rotate(frame, self.rotation)
                     # self.draw_date_time(frame)
-                    # self.draw_gps_data(frame)
+                    self.draw_gps_data(frame)
                     self._last_frame = frame
                     # self.put_to_stream_queue()
                 else:
