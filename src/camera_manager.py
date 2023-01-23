@@ -109,9 +109,9 @@ class CameraManager(Thread, metaclass=Singleton):
                     # self.draw_date_time(frame)
                     self.draw_gps_data(frame)
                     self._last_frame = frame
-                    cv2.imshow("Camera", frame)
-                    if cv2.waitKey(1) & 0xFF == ord('q'):
-                        break
+                    # cv2.imshow("Camera", frame)
+                    # if cv2.waitKey(1) & 0xFF == ord('q'):
+                    #     break
                     # self.put_to_stream_queue()
                 else:
                     self._last_frame = None
