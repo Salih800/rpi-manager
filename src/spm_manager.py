@@ -35,6 +35,7 @@ class SpmManager(Thread):
             except Exception as e:
                 logging.error(f"SpmManager: {e}", exc_info=True)
                 rst_spm()
+                time.sleep(30)
         self.stop()
 
     def stop(self):
