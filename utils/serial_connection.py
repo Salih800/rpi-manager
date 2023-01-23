@@ -20,20 +20,18 @@ class SerialConnection:
             return wrapper
 
     def __init__(self,
-                 port,
-                 baudrate,
-                 timeout,
+                 settings,
                  bytesize=serial.EIGHTBITS,
                  parity=serial.PARITY_NONE,
                  stopbits=serial.STOPBITS_ONE
                  ):
-        self.port = port
-        self.baudrate = baudrate
-        self.timeout = timeout
+        self.port = settings.port
+        self.baudrate = settings.baudrate
+        self.timeout = settings.timeout
         self.bytesize = bytesize
         self.parity = parity
         self.stopbits = stopbits
-        self.write_timeout = timeout
+        self.write_timeout = settings.timeout
 
         self._serial = serial.Serial(baudrate=self.baudrate,
                                      timeout=self.timeout,
@@ -61,7 +59,6 @@ class SerialConnection:
                 break
             if data.startswith(expected):
                 return data
-
 
     @Decorators.ensure_open
     def close(self):

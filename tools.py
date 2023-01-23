@@ -136,7 +136,7 @@ def check_system_time(gps_local_time):
 
 # install repo requirements if not installed
 def install_requirements():
-    if subprocess.call(["pip3", "install", "-r", "requirements.txt"]) == 0:
+    if subprocess.call(["pip3", "install", "-qr", "requirements.txt"]) == 0:
         logging.info("Requirements installed.")
         return True
     else:

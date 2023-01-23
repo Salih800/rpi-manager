@@ -51,9 +51,7 @@ class VehicleController(threading.Thread, DeviceConfig):
             if self.gps_reader.is_alive():
                 return
         self.gps_reader = GpsReader(parent=self,
-                                    port=self.gps_settings.port,
-                                    baudrate=self.gps_settings.baudrate,
-                                    timeout=self.gps_settings.timeout)
+                                    settings=self.gps_settings)
 
     def stop_gps_reader(self):
         if self.gps_reader is not None:

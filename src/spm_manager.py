@@ -14,7 +14,7 @@ settings = {"port": 1, "address": 8}
 
 class SpmManager(Thread):
     def __init__(self):
-        Thread.__init__(self, daemon=True, name="SPMManager")
+        Thread.__init__(self, daemon=True, name="SpmManager")
         self._spm = None
         self._settings = settings
         self._is_running = False
