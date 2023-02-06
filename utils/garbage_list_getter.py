@@ -22,14 +22,14 @@ def update_garbage_list(url=url_garbage_locations, vehicle_id=get_vehicle_id(), 
             lat, lng, coord_id = location
             garbage_location_list.append({"id": coord_id, "lat": lat, "lng": lng})
 
-        #if read_garbage_list() == garbage_location_list:
-         #   return False
+        if read_garbage_list() == garbage_location_list:
+            return False
 
         json.dump(garbage_location_list, open(garbage_location_list_file, 'w'))
 
         logging.info(f"Garbage Locations list updated. Total Garbage Container: {len(garbage_location_list)}")
 
-        return False
+        return True
 
     else:
         logging.warning(f"Couldn't get garbage locations. Status Code: {response.status_code}")
