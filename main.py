@@ -32,7 +32,7 @@ def main():
         logging.info(f"check_connection: {connection}")
         connection = rh.connect()
         logging.info(f"connect: {connection}")
-        update_garbage_list()
+
         if system_checker.is_enough_memory():
             if system_checker.is_enough_space():
                 if time.time() - update_time > update_wait_time:
