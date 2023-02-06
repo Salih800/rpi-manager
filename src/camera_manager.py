@@ -98,7 +98,7 @@ class CameraManager(Thread, metaclass=Singleton):
         log_time = 0
         while self._running:
             self.start_virtual_camera()
-            self.start_streamer()
+            # self.start_streamer()
             if self.get_camera():
                 ret, frame = self.camera.read()
                 if ret:
@@ -118,7 +118,7 @@ class CameraManager(Thread, metaclass=Singleton):
                     logging.warning("Camera read failed!")
                     self.camera.release()
             else:
-                time.sleep(0.1)
+                time.sleep(1)
 
     # def put_to_stream_queue(self):
     #     frame = cv2.cvtColor(self.last_frame, cv2.COLOR_BGR2RGB)

@@ -10,6 +10,7 @@ from src.gps_manager import GpsReader
 from src.file_uploader import upload_gps_data
 from src.rtsp_streamer import RtspStreamer
 from src.spm_manager import SpmManager
+from src.socket_manager import SocketManager
 # from src.server_listener import Listener
 
 from tools import check_locations
@@ -24,6 +25,7 @@ class VehicleController(threading.Thread, DeviceConfig):
         self.gps_reader = None
         self.rtsp_streamer = None
         self.spm_manager = None
+        self.socket_manager = None
 
         # self.server_listener = Listener(streaming_width=self.streaming_width)
         # self.file_uploader = FileUploader()
@@ -34,6 +36,17 @@ class VehicleController(threading.Thread, DeviceConfig):
 
         self.running = True
         self.start()
+
+    def start_socket_manager(self):
+        if self.socket_manager is not None:
+            if self.socket_manager.is_alive():
+                return
+        self.socket_manager = SocketManager(parent=self)
+
+    def stop_socket_manager(self):
+        if self.socket_manager is not None:
+            if self.socket_manager.is_alive():
+                self.socket_manager.stop()
 
     def start_spm_manager(self):
         if self.spm_manager is not None:
@@ -102,6 +115,7 @@ class VehicleController(threading.Thread, DeviceConfig):
                 self.start_gps_reader()
                 self.start_spm_manager()
                 self.start_camera_manager()
+                self.start_socket_manager()
                 # self.start_streamer()
 
                 gps_data = self.gps_reader.get_gps_data()
@@ -137,5 +151,6 @@ class VehicleController(threading.Thread, DeviceConfig):
         self.stop_camera_manager()
         self.stop_gps_reader()
         self.stop_spm_manager()
+        self.stop_socket_manager()
         # self.server_listener.stop()
         # self.file_uploader.stop()

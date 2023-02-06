@@ -5,3 +5,4 @@ url_garbage_locations = "https://api2.atiknakit.com/garbagedevice/"
 url_cdn_upload = "https://cdn.atiknakit.com/upload?"
 url_atiknakit_server = "93.113.96.30"
 url_stream = "rtsp://93.113.96.30:8554/"
+ATKNAKIT_SOCKET_SERVER = {"ip": "93.113.96.30", "port": 5003}
