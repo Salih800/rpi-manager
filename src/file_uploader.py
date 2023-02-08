@@ -13,7 +13,7 @@ from constants.numbers import mb
 from constants.others import file_upload_type
 from constants.files import atiknakit_failed_uploads, atiknakit_failed_locations, uploaded_files
 from constants.folders import path_to_upload, log_folder
-from constants.urls import url_location_upload, url_image_info_upload, url_cdn_upload
+from constants.urls import url_location_upload, url_image_info_upload, url_cdn_upload, RPI_API_URL
 
 from tools import write_json, get_hostname, read_json, calculate_distance, get_directory_size, get_vehicle_id
 
@@ -95,7 +95,7 @@ def upload_failed_uploads(file_path):
 
 def upload_failed_locations(file_path):
     location_json = read_json(file_path)
-    response = rh.post(url=url_location_upload + get_vehicle_id(), json=location_json)
+    response = rh.post(url=url_location_upload + get_vehicle_id(), json=location_json, timeout=10)
     if response.status_code == 200:
         logging.info(f"{file_path} uploaded")
         os.remove(file_path)
@@ -234,6 +234,19 @@ class ImageInfo:
         }
 
 
+def upload_image_to_api(file_path):
+    file_name = os.path.basename(file_path)
+    file = {"file": (file_name, open(file_path, "rb").read())}
+    response = rh.post(RPI_API_URL + "upload", files=file, timeout=10)
+    if response.status_code == 200:
+        os.remove(file_path)
+        return True
+    else:
+        logging.warning(f"Image file couldn't uploaded! Status Code: {response.status_code}: {response.text}")
+        time.sleep(10)
+        return False
+
+
 class FileUploader(threading.Thread):
     def __init__(self, folder_path=path_to_upload):
         threading.Thread.__init__(self, daemon=True, name="FileUploader")
@@ -261,13 +274,13 @@ class FileUploader(threading.Thread):
                         if rh.check_connection():
 
                             if file_path.suffix == ".jpg":
-                                upload_image(file_path)
+                                upload_image_to_api(file_path)
 
-                            elif file_path.suffix == ".mp4":
-                                upload_video(file_path)
-
-                            elif file_path.name.endswith(atiknakit_failed_uploads):
-                                upload_failed_uploads(file_path)
+                            # elif file_path.suffix == ".mp4":
+                            #     upload_video(file_path)
+                            #
+                            # elif file_path.name.endswith(atiknakit_failed_uploads):
+                            #     upload_failed_uploads(file_path)
 
                             elif file_path.name.endswith(atiknakit_failed_locations):
                                 upload_failed_locations(file_path)

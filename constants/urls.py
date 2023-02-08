@@ -6,3 +6,4 @@ url_cdn_upload = "https://cdn.atiknakit.com/upload?"
 url_atiknakit_server = "93.113.96.30"
 url_stream = "rtsp://93.113.96.30:8554/"
 ATKNAKIT_SOCKET_SERVER = {"ip": "93.113.96.30", "port": 5003}
+RPI_API_URL = "http://93.113.96.30:8081/"
