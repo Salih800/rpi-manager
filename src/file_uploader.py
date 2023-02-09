@@ -247,6 +247,19 @@ def upload_image_to_api(file_path):
         return False
 
 
+def upload_log_to_api(file_path):
+    file_name = os.path.basename(file_path)
+    file = {"file": (file_name, open(file_path, "rb").read())}
+    response = rh.post(RPI_API_URL + "upload", files=file, timeout=30)
+    if response.status_code == 200:
+        os.remove(file_path)
+        return True
+    else:
+        logging.warning(f"Log file couldn't uploaded! Status Code: {response.status_code}: {response.text}")
+        time.sleep(10)
+        return False
+
+
 class FileUploader(threading.Thread):
     def __init__(self, folder_path=path_to_upload):
         threading.Thread.__init__(self, daemon=True, name="FileUploader")
@@ -275,6 +288,9 @@ class FileUploader(threading.Thread):
 
                             if file_path.suffix == ".jpg":
                                 upload_image_to_api(file_path)
+
+                            elif file_path.suffix == ".log":
+                                upload_log_to_api(file_path)
 
                             # elif file_path.suffix == ".mp4":
                             #     upload_video(file_path)

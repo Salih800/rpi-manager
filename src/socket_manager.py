@@ -37,6 +37,8 @@ class SocketManager(Thread, SocketConnection):
                 logging.warning(f"Couldn't connect to server!: {e}")
             except Exception as e:
                 logging.error(f"Socket error: {e}", exc_info=True)
+            else:
+                continue
             self.disconnect()
             sleep(30)
 
