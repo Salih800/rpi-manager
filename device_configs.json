@@ -70,7 +70,7 @@
     },
     "rpi-1": {
         "device_type": "garbage",
-        "vehicle_id": "34EFL089",
+        "vehicle_id": "34FN8705",
         "maximum_garbage_distance": 30,
         "speed_limit": 5,
         "gps_settings": {
