@@ -68,7 +68,7 @@
             "height": 480
         }
     },
-    "rpi-1": {
+    "autopi-1": {
         "device_type": "garbage",
         "vehicle_id": "34FN8705",
         "maximum_garbage_distance": 30,

@@ -89,6 +89,7 @@ class CameraManager(Thread, metaclass=Singleton):
 
     def stop_streamer(self):
         if self.streamer is not None:
+            logging.info("Stopping streamer...")
             self.streamer.kill()
             self.streamer = None
 

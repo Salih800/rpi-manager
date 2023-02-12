@@ -44,7 +44,7 @@ class SocketManager(Thread, SocketConnection):
 
     def connect(self):
         super().connect()
-        self.send_data({"id": self._parent.vehicle_id})
+        self.send_data({"id": self._parent.hostname})
 
     def stop(self):
         self._running = False
