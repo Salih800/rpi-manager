@@ -10,7 +10,7 @@ from constants.numbers import (max_photo_count, minimum_photo_size, max_video_du
                                minimum_video_size, jpg_save_quality)
 # from constants.others import byte_seperator
 from constants.folders import path_to_upload, recorded_files
-from constants.urls import url_stream
+from constants.urls import URL_STREAM
 
 from utils.singleton import Singleton
 from utils.camera_tools import *
@@ -84,7 +84,7 @@ class CameraManager(Thread, metaclass=Singleton):
         if self._virtual_port is None:
             logging.error("Virtual camera is not running!")
             return
-        stream_url = url_stream + "autopi-1"
+        stream_url = URL_STREAM + "autopi-1"
         self.streamer = stream_to_rtsp(self._virtual_port, stream_url)
 
     def stop_streamer(self):

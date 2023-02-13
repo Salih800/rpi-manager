@@ -10,7 +10,7 @@ import numpy as np
 import psutil
 
 from constants.folders import camera_records
-from constants.urls import url_stream
+from constants.urls import URL_STREAM
 # from utils import request_handler as rh
 
 
@@ -58,7 +58,7 @@ class RtspStreamer(Thread):
 
         self._parent = parent
 
-        self.url = url_stream + settings.path
+        self.url = URL_STREAM + settings.path
         self.width = settings.width
         self.height = settings.height
 

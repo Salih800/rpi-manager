@@ -9,7 +9,7 @@ import utils.request_handler as rh
 from tools import get_vehicle_id
 
 from constants.others import alive_byte
-from constants.urls import url_atiknakit_server
+from constants.urls import URL_ATIKNAKIT_SERVER
 from constants.numbers import atiknakit_server_port, atiknakit_server_timeout, socket_buffer_size, mb
 
 
@@ -20,7 +20,7 @@ class Listener(Thread):
     def __init__(self,
                  vehicle_id=get_vehicle_id(),
                  streaming_width=640,
-                 host=url_atiknakit_server,
+                 host=URL_ATIKNAKIT_SERVER,
                  port=atiknakit_server_port,
                  buff_size=socket_buffer_size,
                  alive_msg=alive_byte,

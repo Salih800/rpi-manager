@@ -13,7 +13,7 @@ from constants.numbers import mb
 from constants.others import file_upload_type
 from constants.files import atiknakit_failed_uploads, atiknakit_failed_locations, uploaded_files
 from constants.folders import path_to_upload, log_folder
-from constants.urls import url_location_upload, url_image_info_upload, url_cdn_upload, RPI_API_URL
+from constants.urls import URL_LOCATION_UPLOAD, URL_IMAGE_INFO_UPLOAD, URL_CDN_UPLOAD, RPI_API_URL
 
 from tools import write_json, get_hostname, read_json, calculate_distance, get_directory_size, get_vehicle_id
 
@@ -22,8 +22,9 @@ def upload_gps_data(new_gps_location, old_gps_location=None):
     if old_gps_location is not None:
         if calculate_distance(old_gps_location.gps_location, new_gps_location.gps_location) < 20:
             return
-
-    response = rh.post(url=url_location_upload + get_vehicle_id(), json=new_gps_location.data_to_upload())
+    location_upload_url = URL_LOCATION_UPLOAD + get_vehicle_id()
+    logging.info(f"Uploading GPS data to server: {location_upload_url}")
+    response = rh.post(url=location_upload_url, json=new_gps_location.data_to_upload())
 
     if response.status_code == 200:
         logging.info(f"GPS data uploaded to server successfully: {new_gps_location.data_to_upload()}")
@@ -38,7 +39,7 @@ def upload_image(file_path):
     with open(file_path, 'rb') as img:
         files = {'file': (file_name, img, 'multipart/form-data', {'Expires': '0'})}
 
-        url_to_upload = (url_cdn_upload + f"type={file_upload_type}"
+        url_to_upload = (URL_CDN_UPLOAD + f"type={file_upload_type}"
                                           f"&date={image_data.date}"
                                           f"&time={image_data.time}")
         response = rh.post(url=url_to_upload, files=files, timeout=30)
@@ -68,7 +69,7 @@ def upload_image(file_path):
 
             write_json(my_file_data, path_to_upload + uploaded_files)
 
-            response = rh.post(url=url_image_info_upload + image_data.vehicle_id,
+            response = rh.post(url=URL_IMAGE_INFO_UPLOAD + image_data.vehicle_id,
                                json=file_data,
                                timeout=10)
             if not response.status_code == 200:
@@ -85,7 +86,7 @@ def upload_image(file_path):
 
 def upload_failed_uploads(file_path):
     images_json = read_json(file_path)
-    response = rh.post(url=url_image_info_upload + get_vehicle_id(), json=images_json)
+    response = rh.post(url=URL_IMAGE_INFO_UPLOAD + get_vehicle_id(), json=images_json)
     if response.status_code == 200:
         logging.info(f"{file_path} uploaded.")
         os.remove(file_path)
@@ -95,7 +96,7 @@ def upload_failed_uploads(file_path):
 
 def upload_failed_locations(file_path):
     location_json = read_json(file_path)
-    response = rh.post(url=url_location_upload + get_vehicle_id(), json=location_json, timeout=10)
+    response = rh.post(url=URL_LOCATION_UPLOAD + get_vehicle_id(), json=location_json, timeout=10)
     if response.status_code == 200:
         logging.info(f"{file_path} uploaded")
         os.remove(file_path)
@@ -153,7 +154,7 @@ def upload_video(file_path):
         file_date = date_of_file.strftime("%Y-%m-%d")
         file_time = date_of_file.strftime("%H:%M:%S")
 
-        url_to_upload = url_cdn_upload + f"type={file_upload_type}&date={file_date}&time={file_time}"
+        url_to_upload = URL_CDN_UPLOAD + f"type={file_upload_type}&date={file_date}&time={file_time}"
         response = rh.post(url=url_to_upload, files=files)
 
     if response.status_code == 200:
@@ -170,7 +171,7 @@ def upload_video(file_path):
                             "date": f"{date_of_file}", "lat": file_lat, "lng": file_lng, "location_id": file_id}
             write_json(my_file_data, path_to_upload + uploaded_files)
 
-            response = rh.post(url=url_image_info_upload + vehicle_id, json=file_data)
+            response = rh.post(url=URL_IMAGE_INFO_UPLOAD + vehicle_id, json=file_data)
             if not response.status_code == 200:
                 logging.warning(f"Video Name couldn't uploaded! Status Code: {response.status_code}")
                 write_json(file_data, path_to_upload + atiknakit_failed_uploads)
