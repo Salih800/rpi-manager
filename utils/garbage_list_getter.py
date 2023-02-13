@@ -10,7 +10,8 @@ from tools import get_vehicle_id
 
 def update_garbage_list(url=url_garbage_locations, vehicle_id=get_vehicle_id(), timeout=5):
     garbage_location_list = []
-    response = rh.get(url + vehicle_id, timeout=timeout)
+    location_url = url + vehicle_id
+    response = rh.get(location_url, timeout=timeout)
 
     if response.status_code == 200:
         garbage_locations = response.json()['garbageLocations']
