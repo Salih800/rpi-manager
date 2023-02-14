@@ -108,7 +108,7 @@ class VehicleController(threading.Thread, DeviceConfig):
             if self.is_enough_space():
                 self.start_gps_reader()
                 self.start_spm_manager()
-                # self.start_camera_manager()
+                self.start_camera_manager()
                 self.start_socket_manager()
                 # self.start_streamer()
 
@@ -135,14 +135,14 @@ class VehicleController(threading.Thread, DeviceConfig):
                                     f"{gps_data.spkm}kmh_"
                                     f"{closest_location_id}.jpg")
 
-                        # self.camera_manager.start_picture_save(photo_name=filename, location_id=closest_location_id)
+                        self.camera_manager.start_picture_save(photo_name=filename, location_id=closest_location_id)
 
             time.sleep(1)
 
     def stop(self) -> None:
         logging.info("Stopping Vehicle Controller...")
         self.running = False
-        # self.stop_camera_manager()
+        self.stop_camera_manager()
         self.stop_gps_reader()
         self.stop_spm_manager()
         self.stop_socket_manager()
