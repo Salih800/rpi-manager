@@ -57,7 +57,7 @@ def stream_to_rtsp(virtual_camera, rtsp_url):
     logging.info(f"Streaming from {virtual_camera} to {rtsp_url}")
     try:
         command = (f"ffmpeg -f v4l2 -i {virtual_camera} "
-                   f"-c:v libx264 -preset ultrafast -tune zerolatency "
+                   f"-c:v libx264 -crf 30 -preset ultrafast -tune zerolatency "
                    f"-f rtsp -rtsp_transport tcp {rtsp_url} "
                    f"-loglevel warning")
         return sp.Popen(command.split())
