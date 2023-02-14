@@ -22,7 +22,7 @@ def upload_gps_data(new_gps_location, old_gps_location=None):
     if old_gps_location is not None:
         if calculate_distance(old_gps_location.gps_location, new_gps_location.gps_location) < 20:
             return
-    location_upload_url = URL_LOCATION_UPLOAD + get_vehicle_id()
+    location_upload_url = URL_LOCATION_UPLOAD + get_hostname()
     logging.info(f"Uploading GPS data to server: {location_upload_url}")
     response = rh.post(url=location_upload_url, json=new_gps_location.data_to_upload())
 

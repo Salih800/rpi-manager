@@ -5,10 +5,10 @@ import os.path
 import utils.request_handler as rh
 from constants.files import garbage_location_list_file
 from constants.urls import URL_GARBAGE_LOCATIONS
-from tools import get_vehicle_id
+from tools import get_vehicle_id, get_hostname
 
 
-def update_garbage_list(url=URL_GARBAGE_LOCATIONS, vehicle_id=get_vehicle_id(), timeout=5):
+def update_garbage_list(url=URL_GARBAGE_LOCATIONS, vehicle_id=get_hostname(), timeout=5):
     garbage_location_list = []
     garbage_locations_url = url + vehicle_id
     logging.info(f"Getting garbage locations from {garbage_locations_url}")
@@ -25,6 +25,7 @@ def update_garbage_list(url=URL_GARBAGE_LOCATIONS, vehicle_id=get_vehicle_id(), 
             garbage_location_list.append({"id": coord_id, "lat": lat, "lng": lng})
 
         if read_garbage_list() == garbage_location_list:
+            logging.info("Garbage Locations list is up to date.")
             return False
 
         json.dump(garbage_location_list, open(garbage_location_list_file, 'w'))
