@@ -107,6 +107,7 @@ class CameraManager(Thread, metaclass=Singleton):
                         logging.info(f"Camera {self.port} is running.")
                         log_time = time.time()
                     frame = imutils.rotate(frame, self.rotation)
+                    update_exposure(self.port, frame)
                     # self.draw_date_time(frame)
                     self.draw_gps_data(frame)
                     self._last_frame = frame

@@ -2,6 +2,7 @@ import json
 import logging
 import subprocess as sp
 import time
+import os
 
 
 def create_virtual_cameras(count=1):
@@ -79,6 +80,38 @@ def get_probe(path, width, height):
     height = int(stream['height'])
     fps = stream['r_frame_rate']
     return width, height, fps
+
+
+def set_manual_exposure_mode(video):
+    os.system(f"v4l2-ctl -d {video} -c exposure_auto=1")
+
+
+def set_auto_exposure_mode(video):
+    os.system(f"v4l2-ctl -d {video} -c exposure_auto=3")
+
+
+def get_exposure_mode(video):
+    return int(os.popen(f"v4l2-ctl -d {video} -C exposure_auto").read().split(":")[1])
+
+
+def set_exposure(video, exposure):
+    os.system(f"v4l2-ctl -d {video} -c exposure_absolute={exposure}")
+
+
+def get_exposure_value(video):
+    return int(os.popen(f"v4l2-ctl -d {video} -C exposure_absolute").read().split(":")[1])
+
+
+def update_exposure(video_device, frame, min_value=50, max_value=200):
+    mean = frame.mean()
+    exposure = get_exposure_value(video_device)
+    if not get_exposure_mode(video_device) == 1:
+        set_manual_exposure_mode(video_device)
+    if mean < min_value:
+        set_exposure(video_device, exposure + 1)
+    elif mean > max_value:
+        set_exposure(video_device, exposure - 1)
+
 
 # def get_frames_from_virtual_camera(virtual_camera):
 #     print("Starting virtual camera stream...")
