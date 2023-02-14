@@ -104,6 +104,8 @@ def get_exposure_value(video):
 
 def update_exposure(video_device, frame, min_value=50, max_value=200):
     mean = frame.mean()
+    if min_value < mean < max_value:
+        return
     exposure = get_exposure_value(video_device)
     if not get_exposure_mode(video_device) == 1:
         set_manual_exposure_mode(video_device)
