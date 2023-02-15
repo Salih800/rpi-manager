@@ -36,12 +36,16 @@ class GpsReader(SerialConnection, Thread):
             # if data.startswith(OK):
         while self.running:
             self.send_command(GET_GPS_DATA)
+            i = 0
             try:
                 data = self.read_until(expected=GPS_DATA)
+                i += 1
                 if data.startswith(GPS_DATA):
                     self._gps_data = GPSData(data)
                 else:
                     self._gps_data = GPSData(GPS_DATA + NO_FIX_DATA)
+                if i % 5 == 0:
+                    self._gps_data.save_to_file()
             except Exception as e:
                 logging.warning(f"GPSReader: {e}")
                 self._gps_data = GPSData(GPS_DATA + NO_FIX_DATA)

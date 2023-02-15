@@ -84,7 +84,7 @@ class GPSData:
             self.nsat_gps = int(self.nsat_gps)
             self.nsat_glonass = int(self.nsat_glonass)
 
-        self.save_to_file()
+        # self.save_to_file()
 
     def to_dict(self):
         return {"UTC": self.UTC, "latitude": self.lat, "longitude": self.lng, "hdop": self.hdop,

@@ -21,16 +21,18 @@ from tools import write_json, get_hostname, read_json, calculate_distance, get_d
 def upload_gps_data(new_gps_location, old_gps_location=None):
     if old_gps_location is not None:
         if calculate_distance(old_gps_location.gps_location, new_gps_location.gps_location) < 20:
-            return
+            return old_gps_location
     location_upload_url = URL_LOCATION_UPLOAD + get_hostname()
     logging.info(f"Uploading GPS data to server: {location_upload_url}")
-    response = rh.post(url=location_upload_url, json=new_gps_location.data_to_upload())
+    response = rh.post(url=location_upload_url, json=new_gps_location.data_to_upload(), timeout=5)
 
     if response.status_code == 200:
         logging.info(f"GPS data uploaded to server successfully: {new_gps_location.data_to_upload()}")
+        return new_gps_location
     else:
         logging.warning(f"GPS data upload to server failed with status code {response.status_code}!")
         write_json(new_gps_location.data_to_upload(), path_to_upload + "_failed_gps_uploads.json")
+        return old_gps_location
 
 
 def upload_image(file_path):

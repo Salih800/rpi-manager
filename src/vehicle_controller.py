@@ -115,10 +115,11 @@ class VehicleController(threading.Thread, DeviceConfig):
                 gps_data = self.gps_reader.get_gps_data()
                 if gps_data.is_valid():
 
-                    threading.Thread(target=upload_gps_data,
-                                     daemon=True, name="gps-uploader",
-                                     args=(gps_data, old_gps_data)).start()
-                    old_gps_data = gps_data
+                    # threading.Thread(target=upload_gps_data,
+                    #                  daemon=True, name="gps-uploader",
+                    #                  args=(gps_data, old_gps_data)).start()
+                    # old_gps_data = gps_data
+                    old_gps_data = upload_gps_data(gps_data, old_gps_data)
 
                     min_distance, closest_location_id = check_locations(gps_data=gps_data, locations=self.garbage_list)
 
