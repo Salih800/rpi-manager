@@ -34,9 +34,9 @@ class GpsReader(SerialConnection, Thread):
             # self.send_command(POWER_UP)
             # data = self.read_until(expected=OK)
             # if data.startswith(OK):
+        i = 0
         while self.running:
             self.send_command(GET_GPS_DATA)
-            i = 0
             try:
                 data = self.read_until(expected=GPS_DATA)
                 i += 1
