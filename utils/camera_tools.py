@@ -102,7 +102,7 @@ def get_exposure_value(video):
     return int(os.popen(f"v4l2-ctl -d {video} -C exposure_absolute").read().split(":")[1])
 
 
-def update_exposure(video_device, frame, min_value=50, max_value=200):
+def update_exposure(video_device, frame, min_value=50, max_value=175):
     mean = frame.mean()
     if min_value < mean < max_value:
         return

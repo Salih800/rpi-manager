@@ -104,7 +104,7 @@ class CameraManager(Thread, metaclass=Singleton):
                 ret, frame = self.camera.read()
                 if ret:
                     if time.time() - log_time > 60:
-                        logging.info(f"Camera {self.port} is running.")
+                        logging.info(f"Camera {self.port} is running. Mean Frame: {frame.mean()}")
                         log_time = time.time()
                     frame = imutils.rotate(frame, self.rotation)
                     update_exposure(self.port, frame)
