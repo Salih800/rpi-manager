@@ -34,18 +34,19 @@ class GpsReader(SerialConnection, Thread):
             # self.send_command(POWER_UP)
             # data = self.read_until(expected=OK)
             # if data.startswith(OK):
-        i = 0
+        gps_log_time = 0
         while self.running:
             self.send_command(GET_GPS_DATA)
             try:
                 data = self.read_until(expected=GPS_DATA)
-                i += 1
                 if data.startswith(GPS_DATA):
                     self._gps_data = GPSData(data)
                 else:
                     self._gps_data = GPSData(GPS_DATA + NO_FIX_DATA)
-                if i % 5 == 0:
+                if time.time() - gps_log_time > 2:
                     self._gps_data.save_to_file()
+                    gps_log_time = time.time()
+
             except Exception as e:
                 logging.warning(f"GPSReader: {e}")
                 self._gps_data = GPSData(GPS_DATA + NO_FIX_DATA)
