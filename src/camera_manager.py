@@ -6,10 +6,10 @@ import time
 from datetime import datetime
 from threading import Thread
 
-from constants.numbers import (max_photo_count, minimum_photo_size, max_video_duration,
-                               minimum_video_size, jpg_save_quality)
+from constants.numbers import (MAX_PHOTO_COUNT, MINIMUM_PHOTO_SIZE, MAX_VIDEO_DURATION,
+                               MINIMUM_VIDEO_SIZE, JPG_SAVE_QUALITY)
 # from constants.others import byte_seperator
-from constants.folders import path_to_upload, recorded_files
+from constants.folders import PATH_TO_UPLOAD, RECORDED_FILES
 from constants.urls import URL_STREAM
 
 from utils.singleton import Singleton
@@ -226,20 +226,20 @@ class CameraManager(Thread, metaclass=Singleton):
             self.location_id = location_id
 
             if self.saved_frame_count > 0:
-                logging.info(f"Saved {self.saved_frame_count} photos. In location {self.location_id}")
+                logging.info(f"Saved {self.saved_frame_count} photos. In location {self.location_id}")  # TODO: Feb 16 08:47:07
             if self.passed_frame_count > 0:
                 logging.info(f"Passed {self.passed_frame_count} photos. In location {self.location_id}")
 
             self.saved_frame_count = 0
             self.passed_frame_count = 0
 
-        if self.saved_frame_count <= max_photo_count:
+        if self.saved_frame_count <= MAX_PHOTO_COUNT:
             frame = self.get_frame()
             if frame is not None:
-                if not os.path.isdir(recorded_files):
-                    os.makedirs(recorded_files)
-                cv2.imwrite(recorded_files + photo_name, frame, [cv2.IMWRITE_JPEG_QUALITY, jpg_save_quality])
-                if check_file_size(recorded_files + photo_name, minimum_photo_size):
+                if not os.path.isdir(RECORDED_FILES):
+                    os.makedirs(RECORDED_FILES)
+                cv2.imwrite(RECORDED_FILES + photo_name, frame, [cv2.IMWRITE_JPEG_QUALITY, JPG_SAVE_QUALITY])
+                if check_file_size(RECORDED_FILES + photo_name, MINIMUM_PHOTO_SIZE):
                     self.saved_frame_count += 1
         else:
             if self.passed_frame_count == 0:
@@ -248,7 +248,7 @@ class CameraManager(Thread, metaclass=Singleton):
 
     def save_video(self, video_name):
         self.taking_video = True
-        video_file_path = recorded_files + video_name
+        video_file_path = RECORDED_FILES + video_name
         cap_info = self.get_camera_info()
         out = cv2.VideoWriter(video_file_path, self.fourcc,
                               cap_info["fps"], (cap_info["width"], cap_info["height"]))
@@ -263,7 +263,7 @@ class CameraManager(Thread, metaclass=Singleton):
                 out.write(cv2.resize(frame, (cap_info["width"], cap_info["height"])))
                 frame_count = frame_count + 1
                 video_duration = time.time() - start_of_video_record
-                if frame_count >= max_video_duration * cap_info["fps"] or video_duration >= max_video_duration:
+                if frame_count >= MAX_VIDEO_DURATION * cap_info["fps"] or video_duration >= MAX_VIDEO_DURATION:
                     logging.warning(f"Frame count is too high! {frame_count} frames "
                                     f"{round(video_duration, 2)} seconds. "
                                     f"Ending the record...")
@@ -274,14 +274,14 @@ class CameraManager(Thread, metaclass=Singleton):
         if os.path.isfile(video_file_path):
             video_record_time = round(time.time() - start_of_video_record, 2)
             file_size = round(os.path.getsize(video_file_path) / (1024 * 1024), 2)
-            if file_size < minimum_video_size:
+            if file_size < MINIMUM_VIDEO_SIZE:
                 logging.warning(f"Recorded file size is too small! Size: {file_size}MB")
                 os.remove(video_file_path)
             else:
                 logging.info(
                     f"Recorded video Size: {file_size}MB in {video_record_time} seconds "
                     f"and Total {frame_count} frames: {video_name}")
-                shutil.move(video_file_path, path_to_upload)
+                shutil.move(video_file_path, PATH_TO_UPLOAD)
 
         else:
             logging.warning(f"OpenCV couldn't find the file: {video_file_path}")

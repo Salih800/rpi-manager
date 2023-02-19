@@ -1,13 +1,13 @@
+opencv-python
+numpy
 requests
 psutil
 pyserial
 imutils
-numpy
 retrying
 smbus2
 
-#ffmpeg-python
-#opencv-python
+# ffmpeg-python
 # pynmea2
 # imutils
 # pillow

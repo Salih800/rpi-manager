@@ -10,7 +10,7 @@ from tools import get_vehicle_id
 
 from constants.others import alive_byte
 from constants.urls import URL_ATIKNAKIT_SERVER
-from constants.numbers import atiknakit_server_port, atiknakit_server_timeout, socket_buffer_size, mb
+from constants.numbers import atiknakit_server_port, atiknakit_server_timeout, socket_buffer_size, MB
 
 
 class Listener(Thread):
@@ -98,7 +98,7 @@ class Listener(Thread):
                                         stream_end_time = time.time() - streamer.start_time
                                         logging.info("Stop stream command received.")
                                         logging.info(f"Streamed {streamer.frame_sent} frames and "
-                                                     f"total {round(streamer.total_bytes_sent / mb, 2)}MB"
+                                                     f"total {round(streamer.total_bytes_sent / MB, 2)}MB"
                                                      f" in {round(stream_end_time, 1)} seconds")
                                     else:
                                         logging.warning(f"Stream was already {streamer.streaming}!")

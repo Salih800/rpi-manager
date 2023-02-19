@@ -1,18 +1,17 @@
 import logging
 import time
 
-from constants.numbers import update_wait_time
+from constants.numbers import UPDATE_WAIT_TIME
 
 from src.system_checker import SystemChecker
 from src.vehicle_controller import VehicleController
 
 from src.file_uploader import FileUploader
-from utils.logger_setter import set_logger
 from utils.garbage_list_getter import update_garbage_list
 import utils.request_handler as rh
 
 from tools import (restart_service, get_running_threads,
-                   update_repo, restart_system, get_vehicle_id)
+                   update_repo, restart_system)
 
 
 def main():
@@ -30,12 +29,10 @@ def main():
 
         connection = rh.check_connection()
         logging.info(f"check_connection: {connection}")
-        connection = rh.connect()
-        logging.info(f"connect: {connection}")
 
         if system_checker.is_enough_memory():
             if system_checker.is_enough_space():
-                if time.time() - update_time > update_wait_time:
+                if time.time() - update_time > UPDATE_WAIT_TIME:
                     update_time = time.time()
                     if update_repo() or update_garbage_list():
                         restart_service()
@@ -58,8 +55,9 @@ def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(levelname)s | %(funcName)s | %(message)s',
+    )
     update_repo()
-    vehicle_id = get_vehicle_id()
-    set_logger(vehicle_id)
-    logging.info("Program started")
     main()

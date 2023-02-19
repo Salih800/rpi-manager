@@ -69,7 +69,7 @@
         }
     },
     "autopi-1": {
-        "device_type": "garbage",
+        "device_type": "caca-garbage",
         "vehicle_id": "34FN8705",
         "maximum_garbage_distance": 30,
         "speed_limit": 5,

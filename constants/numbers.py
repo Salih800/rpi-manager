@@ -1,10 +1,10 @@
-max_photo_count = 400
-minimum_photo_size = 10 * 1024  # 10KB
-max_video_duration = 60  # 60 seconds
-minimum_video_size = 0.1  # 0.1MB
+MAX_PHOTO_COUNT = 400
+MINIMUM_PHOTO_SIZE = 10 * 1024  # 10KB
+MAX_VIDEO_DURATION = 60  # 60 seconds
+MINIMUM_VIDEO_SIZE = 0.1  # 0.1MB
+UPDATE_WAIT_TIME = 60 * 60  # 1 hour
+JPG_SAVE_QUALITY = 50
+MB = 1024 * 1024
 atiknakit_server_port = 8181
 atiknakit_server_timeout = 60
 socket_buffer_size = 127
-jpg_save_quality = 50
-mb = 1024 * 1024
-update_wait_time = 60 * 60  # 1 hour

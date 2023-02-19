@@ -1,24 +1,19 @@
 import logging
-import threading
+from threading import Thread
 import time
-
-from utils.device_config import DeviceConfig
-from utils.garbage_list_getter import read_garbage_list
 
 from src.camera_manager import CameraManager
 from src.gps_manager import GpsReader
-from src.file_uploader import upload_gps_data
-from src.rtsp_streamer import RtspStreamer
 from src.spm_manager import SpmManager
 from src.socket_manager import SocketManager
-# from src.server_listener import Listener
+from src.recorder import Recorder
 
-from tools import check_locations
+from utils.device_config import DeviceConfig
 
 
-class VehicleController(threading.Thread, DeviceConfig):
+class VehicleController(Thread, DeviceConfig):
     def __init__(self, is_enough_space):
-        threading.Thread.__init__(self, daemon=True, name="VehicleController")
+        Thread.__init__(self, daemon=True, name="VehicleController")
         DeviceConfig.__init__(self)
 
         self.camera_manager = None
@@ -26,16 +21,23 @@ class VehicleController(threading.Thread, DeviceConfig):
         self.rtsp_streamer = None
         self.spm_manager = None
         self.socket_manager = None
-
-        # self.server_listener = Listener(streaming_width=self.streaming_width)
-        # self.file_uploader = FileUploader()
+        self.recorder = None
 
         self.is_enough_space = is_enough_space
 
-        self.garbage_list = read_garbage_list()
-
-        self.running = True
+        self._running = True
         self.start()
+
+    def start_recorder(self):
+        if self.recorder is not None:
+            if self.recorder.is_alive():
+                return
+        self.recorder = Recorder(parent=self)
+
+    def stop_recorder(self):
+        if self.recorder is not None:
+            if self.recorder.is_alive():
+                self.recorder.stop()
 
     def start_socket_manager(self):
         if self.socket_manager is not None:
@@ -83,71 +85,26 @@ class VehicleController(threading.Thread, DeviceConfig):
             if self.camera_manager.is_alive():
                 self.camera_manager.stop()
 
-    def start_streamer(self):
-        if self.rtsp_streamer is not None:
-            if self.rtsp_streamer.is_alive():
-                return
-        self.rtsp_streamer = RtspStreamer(parent=self,
-                                          settings=self.stream_settings)
-
-    def stop_streamer(self):
-        if self.rtsp_streamer is not None:
-            if self.rtsp_streamer.is_alive():
-                self.rtsp_streamer.stop()
-
     def run(self) -> None:
-        self.running = True
-        old_gps_data = None
         logging.info("Starting Vehicle Controller...")
         logging.info(f"{self}")
 
-        location_log_time = 0
-
-        while self.running:
+        while self._running:
 
             if self.is_enough_space():
-                self.start_gps_reader()
                 self.start_spm_manager()
+                self.start_gps_reader()
                 self.start_camera_manager()
-                self.start_socket_manager()
-                # self.start_streamer()
-
-                gps_data = self.gps_reader.get_gps_data()
-                if gps_data.is_valid():
-
-                    # threading.Thread(target=upload_gps_data,
-                    #                  daemon=True, name="gps-uploader",
-                    #                  args=(gps_data, old_gps_data)).start()
-                    # old_gps_data = gps_data
-                    old_gps_data = upload_gps_data(gps_data, old_gps_data)
-
-                    min_distance, closest_location_id = check_locations(gps_data=gps_data, locations=self.garbage_list)
-
-                    if time.time() - location_log_time > 60:
-                        logging.info(f"Closest location: {closest_location_id} | "
-                                     f"Distance: {int(min_distance)} meters | "
-                                     f"Speed: {gps_data.spkm} km/h")
-                        location_log_time = time.time()
-
-                    if (min_distance < self.max_loc_dist and
-                            gps_data.spkm < self.speed_limit):
-                        filename = (f"{self.vehicle_id}_"
-                                    f"{self.device_type}_"
-                                    f"{gps_data.local_date_str}_"
-                                    f"{gps_data.lat},{gps_data.lng}_"
-                                    f"{gps_data.spkm}kmh_"
-                                    f"{closest_location_id}.jpg")
-
-                        self.camera_manager.start_picture_save(photo_name=filename, location_id=closest_location_id)
+                # self.start_socket_manager()
+                self.start_recorder()
 
             time.sleep(1)
 
     def stop(self) -> None:
         logging.info("Stopping Vehicle Controller...")
-        self.running = False
+        self._running = False
+        self.stop_recorder()
+        # self.stop_socket_manager()
         self.stop_camera_manager()
         self.stop_gps_reader()
         self.stop_spm_manager()
-        self.stop_socket_manager()
-        # self.server_listener.stop()
-        # self.file_uploader.stop()
