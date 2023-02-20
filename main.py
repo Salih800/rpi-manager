@@ -57,7 +57,7 @@ def main():
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
-        format='%(levelname)s | %(filename)s | %(pathname)s | %(threadName)s | %(module)s | %(funcName)s | %(message)s',
+        format='%(levelname)s | %(threadName)s | %(message)s',
     )
     update_repo()
     main()
