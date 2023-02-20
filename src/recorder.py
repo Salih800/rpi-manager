@@ -47,6 +47,7 @@ class Recorder(Thread):
 
             self.saved_frame_count = 0
             self.passed_frame_count = 0
+            self.failed_frame_count = 0
 
         if self.saved_frame_count <= MAX_PHOTO_COUNT:
             frame = self._parent.camera_manager.get_frame()
@@ -109,11 +110,11 @@ class Recorder(Thread):
                             f"{gps_data.spkm}kmh_"
                             f"{closest_location_id}.jpg"
                         )
-
-                        # self.save_picture(
-                        #     photo_name=filename,
-                        #     location_id=closest_location_id
-                        # )
+                        Thread(
+                            target=self.save_picture,
+                            args=(filename, closest_location_id),
+                            name="save_picture"
+                        ).start()
             # else:
             time.sleep(1)
 
