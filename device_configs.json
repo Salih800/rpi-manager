@@ -84,7 +84,7 @@
             "height": 480
         },
         "camera_settings": {
-            "port": "/dev/video0",
+            "port": "/dev/video2",
             "rotation": 0,
             "fourcc": "YUYV",
             "width": 640,
