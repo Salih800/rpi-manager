@@ -72,7 +72,7 @@
         "device_type": "caca-garbage",
         "vehicle_id": "34FN8705",
         "maximum_garbage_distance": 30,
-        "speed_limit": 5,
+        "speed_limit": 1,
         "gps_settings": {
             "port": "/dev/ttyUSB1",
             "baudrate": 115200,
