@@ -94,7 +94,7 @@ class VehicleController(Thread, DeviceConfig):
             if self.is_enough_space():
                 self.start_spm_manager()
                 self.start_gps_reader()
-                self.start_camera_manager()
+                # self.start_camera_manager()
                 # self.start_socket_manager()
                 self.start_recorder()
 
@@ -105,6 +105,6 @@ class VehicleController(Thread, DeviceConfig):
         self._running = False
         self.stop_recorder()
         # self.stop_socket_manager()
-        self.stop_camera_manager()
+        # self.stop_camera_manager()
         self.stop_gps_reader()
         self.stop_spm_manager()

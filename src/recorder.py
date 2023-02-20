@@ -110,12 +110,12 @@ class Recorder(Thread):
                             f"{closest_location_id}.jpg"
                         )
 
-                        self.save_picture(
-                            photo_name=filename,
-                            location_id=closest_location_id
-                        )
-            else:
-                time.sleep(1)
+                        # self.save_picture(
+                        #     photo_name=filename,
+                        #     location_id=closest_location_id
+                        # )
+            # else:
+            time.sleep(1)
 
     def stop(self):
         logging.info("Stopping recorder...")
