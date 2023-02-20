@@ -28,7 +28,10 @@ def main():
             system_checker = SystemChecker()
 
         connection = rh.check_connection()
-        logging.info(f"check_connection: {connection}")
+        if connection:
+            logging.info("Connection is OK.")
+        else:
+            logging.warning("No connection.")
 
         if system_checker.is_enough_memory():
             if system_checker.is_enough_space():

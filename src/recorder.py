@@ -84,7 +84,7 @@ class Recorder(Thread):
         while self._running:
             gps_data = self._parent.gps_reader.get_gps_data()
             if gps_data.is_valid():
-                Thread(target=self.upload_gps_data, args=(gps_data,)).start()
+                Thread(target=self.upload_gps_data, args=(gps_data,), name="gps_upload").start()
 
                 min_distance, closest_location_id = check_locations(
                     gps_data=gps_data,
