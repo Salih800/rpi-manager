@@ -35,7 +35,7 @@ def main():
 
         if system_checker.is_enough_memory():
             if system_checker.is_enough_space():
-                if time.time() - update_time > UPDATE_WAIT_TIME:
+                if time.time() - update_time > UPDATE_WAIT_TIME and connection:
                     update_time = time.time()
                     if update_repo() or update_garbage_list():
                         restart_service()

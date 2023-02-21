@@ -121,14 +121,14 @@ class FileUploader(threading.Thread):
         threading.Thread.__init__(self, daemon=True, name="FileUploader")
         self.folder_path = folder_path
 
-        self.running = False
+        self._running = False
         self.start()
 
     def run(self):
-        self.running = True
+        self._running = True
         logging.info(f"Starting File Uploader...")
 
-        while self.running:
+        while self._running:
 
             if rh.check_connection():
 
@@ -136,14 +136,15 @@ class FileUploader(threading.Thread):
                 if len(file_list) > 1:
                     logging.info(f"{len(file_list)} files to upload. "
                                  f"Total size: {get_directory_size(self.folder_path)}")
-
+                uploaded_file_count = 0
+                start_time = time.time()
                 for file_path in file_list:
                     if os.path.getsize(file_path) != 0:
 
                         if rh.check_connection():
 
                             if file_path.suffix == ".jpg":
-                                upload_image_to_api(file_path)
+                                uploaded_file_count += 1 if upload_image_to_api(file_path) else 0
 
                             elif file_path.name.endswith(FAILED_GPS_UPLOADS):
                                 upload_failed_locations(file_path)
@@ -156,9 +157,10 @@ class FileUploader(threading.Thread):
                         logging.warning(
                             f"Image File size is too small! File: {file_path}\tSize: {os.path.getsize(file_path)}")
                         os.remove(file_path)
-
+                if uploaded_file_count > 0:
+                    logging.info(f"{uploaded_file_count} files uploaded in {time.time() - start_time:.2f} seconds.")
             time.sleep(60)
 
     def stop(self):
-        self.running = False
+        self._running = False
         logging.info("Stopping File Uploader...")
