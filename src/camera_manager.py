@@ -99,7 +99,7 @@ class CameraManager(Thread, metaclass=Singleton):
         log_time = 0
         while self._running:
             self.start_virtual_camera()
-            self.start_streamer()
+            # self.start_streamer()
             if self.get_camera():
                 ret, frame = self.camera.read()
                 if ret:
