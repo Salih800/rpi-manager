@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-from constants.folders import log_folder
+from constants.folders import LOG_FOLDER
 
 
 class CustomFormatter(logging.Formatter):
@@ -32,9 +32,8 @@ class CustomFormatter(logging.Formatter):
 
 
 def set_logger(log_name="rpi-default"):
-    Path(log_folder).mkdir(parents=True, exist_ok=True)
-    log_filename = log_folder + log_name + '.log'
-
+    Path(LOG_FOLDER).mkdir(parents=True, exist_ok=True)
+    log_filename = LOG_FOLDER + log_name + '.log'
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
@@ -43,10 +42,16 @@ def set_logger(log_name="rpi-default"):
     file_handler = logging.FileHandler(log_filename)
     file_handler.setFormatter(logging.Formatter(fmt))
 
-    stream_handler = logging.StreamHandler()
-    stream_handler.setLevel(logging.INFO)
-    stream_handler.setFormatter(CustomFormatter(fmt))
-
-    logger.addHandler(stream_handler)
+    # stream_handler = logging.StreamHandler()
+    # stream_handler.setLevel(logging.INFO)
+    # stream_handler.setFormatter(CustomFormatter(fmt))
+    #
+    # logger.addHandler(stream_handler)
     logger.addHandler(file_handler)
+    return logger
+
+
+def get_logger(name, log_level=logging.INFO):
+    logger = logging.getLogger(name)
+    logger.setLevel(log_level)
     return logger

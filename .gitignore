@@ -1,4 +1,9 @@
 .idea
+_streams
+
+# Runtime Files
+_garbage_locations.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

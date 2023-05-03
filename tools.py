@@ -7,38 +7,44 @@ import sys
 import threading
 import time
 from datetime import datetime, timedelta
+import cv2
 
-from constants.folders import path_to_upload
+from constants.folders import PATH_TO_UPLOAD
 from constants.files import device_config_file
 
-from src.size_converter import SizeConverter
+from utils.size_converter import SizeConverter
 
 
 def read_json(json_file):
     try:
-        data = json.load(open(json_file, "r"))
-        return data
-
-    except json.decoder.JSONDecodeError as json_error:
-        logging.warning(f"JSONDecodeError happened at {json_file}: {json_error.pos}. Trying to save the file...")
-        if json_error.pos == 0:
-            data = []
+        if not os.path.isfile(json_file):
+            return []
+        if os.path.getsize(json_file) == 0:
+            return []
         else:
-            data = json.loads(open(json_file).read()[:json_error.pos])
-        logging.info(f"{len(data)} file info saved.")
-        return data
+            return json.load(open(json_file, "r"))
+    except json.decoder.JSONDecodeError as json_error:
+        logging.error(f"JSONDecodeError happened at {json_file}: {json_error.pos}. "
+                      f"Trying to backup the file...", exc_info=True)
+        backup_file = json_file.replace(".json", "_backup.json")
+        shutil.move(json_file, backup_file)
+        logging.info(f"Backup file created: {backup_file}")
+        return []
 
 
 def write_json(json_data, json_file):
-    json_file_path = os.path.split(json_file)[0]
-    if not os.path.isdir(json_file_path):
-        os.makedirs(json_file_path)
-    if not os.path.isfile(json_file):
-        data = [json_data]
-    else:
+    try:
+        json_file_path = os.path.split(json_file)[0]
+        os.makedirs(json_file_path, exist_ok=True)
         data = read_json(json_file)
-        data.append(json_data)
-    json.dump(data, open(json_file, "w"))
+        if json_data not in data:
+            data.append(json_data)
+        else:
+            logging.warning(f"JSON data already exists in {json_file} file: {json_data}")
+            return
+        json.dump(data, open(json_file, "w"))
+    except:
+        logging.exception(f"Error happened while writing to '{json_file}' file.")
 
 
 def get_hostname() -> str:
@@ -56,14 +62,15 @@ def get_device_config(hostname=get_hostname()):
         return device_configs[hostname]
     except KeyError:
         logging.error(f"Device config for {get_hostname()} not found in {device_config_file}.")
-    raise KeyError("Device config not found.")
+        return device_configs["default"]
+    # raise KeyError("Device config not found.")
 
 
 # calculate distance between two gps locations in meters
 def calculate_distance(location1, location2) -> float:
     import math
-    lat1, lon1 = location1["lat"], location1["lng"]
-    lat2, lon2 = location2["lat"], location2["lng"]
+    lat1, lon1 = float(location1["lat"]), float(location1["lng"])
+    lat2, lon2 = float(location2["lat"]), float(location2["lng"])
     radius = 6371e3
     phi1 = lat1 * math.pi / 180
     phi2 = lat2 * math.pi / 180
@@ -84,11 +91,7 @@ def restart_system(error_type, error_message) -> None:
 
 
 # check given location between list of locations and return the closest location in meters and index
-def check_location_and_speed(gps_data,
-                             locations,
-                             maximum_distance=50,
-                             speed_limit=5,
-                             on_the_move=False):
+def check_locations(gps_data, locations):
     min_distance = float("inf")
     closest_location = None
 
@@ -97,18 +100,13 @@ def check_location_and_speed(gps_data,
         if distance < min_distance:
             min_distance = distance
             closest_location = loc
-    if maximum_distance > min_distance:
-        if on_the_move:
-            if gps_data.speed_in_kmh > speed_limit:
-                return closest_location["id"]
-        else:
-            if gps_data.speed_in_kmh < speed_limit:
-                return closest_location["id"]
+
+    return min_distance, closest_location["id"]
 
 
-def restart_program():
-    logging.info("Restarting the program...")
-    os.execl(sys.executable, sys.executable, *sys.argv)
+def restart_service():
+    logging.info("Restarting the service...")
+    os.system("sudo systemctl restart rpi-manager.service")
 
 
 # check given file is bigger than given size in kb
@@ -119,9 +117,8 @@ def check_file_size(file_path, size):
             os.remove(file_path)
             return False
         else:
-            if not os.path.isdir(path_to_upload):
-                os.makedirs(path_to_upload)
-            shutil.move(file_path, path_to_upload)
+            os.makedirs(PATH_TO_UPLOAD, exist_ok=True)
+            shutil.move(file_path, PATH_TO_UPLOAD + os.path.basename(file_path))
         return True
     else:
         logging.warning(f"{file_path} is not a file.")
@@ -143,7 +140,7 @@ def check_system_time(gps_local_time):
 
 # install repo requirements if not installed
 def install_requirements():
-    if subprocess.call(["pip", "install", "-r", "requirements.txt"]) == 0:
+    if subprocess.call(["pip3", "install", "-qr", "requirements.txt"]) == 0:
         logging.info("Requirements installed.")
         return True
     else:
@@ -154,17 +151,18 @@ def install_requirements():
 def update_repo():
     # logging.info("Trying to update repo...")
     try:
-        stdout = subprocess.check_output("git pull").decode()
+        stdout = subprocess.check_output(["git", "pull"]).decode()
         if stdout.startswith("Already"):
             logging.info("Repo is already up to date.")
             return False
         else:
             logging.info("Repo is updated.")
             install_requirements()
+            restart_service()
             return True
 
     except subprocess.CalledProcessError as stderr:
-        logging.warning(stderr, exc_info=True)
+        logging.warning(stderr)
         return False
 
 
@@ -191,3 +189,31 @@ def get_directory_size(directory):
         # if for whatever reason we can't open the folder, return 0
         return 0
     return total
+
+
+def draw_text(img,
+              text,
+              pos=(0, 0),
+              text_color=(255, 255, 255),
+              text_size=2.0,
+              text_thickness=1,
+              text_bg_color=(0, 0, 0)
+              ):
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    x, y = pos
+    (w, h), b = cv2.getTextSize(text, font, text_size, text_thickness)
+    cv2.rectangle(img, (x, y), (x + w, y - h - b), text_bg_color, -1)
+    cv2.putText(img, text, (x, y - 5), font, text_size, text_color, text_thickness)
+
+
+def decode_fourcc(fourcc):
+    return ''.join([chr((int(fourcc) >> 8 * i) & 0xFF) for i in range(4)])
+
+
+def send_system_command(command):
+    try:
+        logging.info(f"Sending command: {command}")
+        os.system(command)
+    except Exception as e:
+        logging.error(e, exc_info=True)
+        time.sleep(5)

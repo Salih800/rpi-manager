@@ -4,13 +4,13 @@ from threading import Thread
 import socket
 
 from src.streamer import Streamer
-import src.request_handler as rh
+import utils.request_handler as rh
 
 from tools import get_vehicle_id
 
 from constants.others import alive_byte
-from constants.urls import url_atiknakit_server
-from constants.numbers import atiknakit_server_port, atiknakit_server_timeout, socket_buffer_size, mb
+from constants.urls import URL_ATIKNAKIT_SERVER
+from constants.numbers import atiknakit_server_port, atiknakit_server_timeout, socket_buffer_size, MB
 
 
 class Listener(Thread):
@@ -20,7 +20,7 @@ class Listener(Thread):
     def __init__(self,
                  vehicle_id=get_vehicle_id(),
                  streaming_width=640,
-                 host=url_atiknakit_server,
+                 host=URL_ATIKNAKIT_SERVER,
                  port=atiknakit_server_port,
                  buff_size=socket_buffer_size,
                  alive_msg=alive_byte,
@@ -98,7 +98,7 @@ class Listener(Thread):
                                         stream_end_time = time.time() - streamer.start_time
                                         logging.info("Stop stream command received.")
                                         logging.info(f"Streamed {streamer.frame_sent} frames and "
-                                                     f"total {round(streamer.total_bytes_sent / mb, 2)}MB"
+                                                     f"total {round(streamer.total_bytes_sent / MB, 2)}MB"
                                                      f" in {round(stream_end_time, 1)} seconds")
                                     else:
                                         logging.warning(f"Stream was already {streamer.streaming}!")
