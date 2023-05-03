@@ -4,6 +4,9 @@ _streams
 # Runtime Files
 _garbage_locations.json
 
+# Runtime Folders
+_location_records/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
